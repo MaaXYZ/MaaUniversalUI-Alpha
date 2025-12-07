@@ -32,18 +32,22 @@
 
   const items = [
     {
+      name: 'Home',
       icon: 'fluent:home-24-regular',
       route: HOME_ROUTE,
     },
     {
+      name: 'Logs',
       icon: 'fluent:clock-24-regular',
       route: LOGS_ROUTE,
     },
     {
+      name: 'About',  
       icon: 'fluent:info-24-regular',
       route: ABOUT_ROUTE,
     },
     {
+      name: 'Settings',
       icon: 'fluent:settings-24-regular',
       route: SETTINGS_ROUTE,
     },
@@ -70,6 +74,7 @@
           : `${defaultClass} ${hoverClass}`,
       ]"
       @click="navigateTo(item.route)"
+      :title="item.name"
     >
       <Icon :icon="item.icon" width="24" height="24" />
     </div>
