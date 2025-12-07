@@ -71,7 +71,7 @@ jobs:
 
       - name: Build wails app
         run: |
-          wails build
+          wails build -tags webkit2_41
       
       - name: Run Tests
         env:
