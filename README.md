@@ -1,4 +1,6 @@
-# README
+# MUU-Alpha
+
+MAA Universal UI, aka MUU.
 
 ## Development
 
