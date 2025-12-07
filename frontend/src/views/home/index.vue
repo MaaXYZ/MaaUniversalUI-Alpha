@@ -1,11 +1,11 @@
 <script setup lang="ts">
-
+  import TaskList from '@/views/home/components/task-list/index.vue'
 </script>
 
 <template>
-  <div>Home</div>
+  <div class="pl-24">
+    <task-list />
+  </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
