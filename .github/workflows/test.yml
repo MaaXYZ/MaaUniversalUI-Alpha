@@ -69,9 +69,9 @@ jobs:
           cd frontend
           pnpm run build
 
-      - name: Generate wailsjs
+      - name: Build wails app
         run: |
-          wails generate module
+          wails build
       
       - name: Run Tests
         env:
