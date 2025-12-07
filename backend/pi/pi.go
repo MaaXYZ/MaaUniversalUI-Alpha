@@ -9,12 +9,17 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+
+	"github.com/google/uuid"
 )
 
 type piService struct {
-	ctx      context.Context
-	version  Version
-	v2Loaded *V2Loaded
+	ctx        context.Context
+	version    Version
+	v2Loaded   *V2Loaded
+	config     *InterfaceConfig
+	configPath string
+	configMu   sync.RWMutex
 }
 
 var (
@@ -25,9 +30,17 @@ var (
 func PI() *piService {
 	if piSrvInst == nil {
 		piSrvOnce.Do(func() {
+			exePath, err := os.Executable()
+			if err != nil {
+				exePath = "."
+			}
+			exeDir := filepath.Dir(exePath)
+
 			piSrvInst = &piService{
-				version:  VersionUnknown,
-				v2Loaded: nil,
+				version:    VersionUnknown,
+				v2Loaded:   nil,
+				config:     nil,
+				configPath: filepath.Join(exeDir, "interface_config.json"),
 			}
 		})
 	}
@@ -71,6 +84,16 @@ func Startup(ctx context.Context) {
 	} else {
 		log.Printf("unknown version: %d", version)
 		return
+	}
+
+	// 加载配置
+	if err := s.loadConfig(); err != nil {
+		log.Printf("load config failed, initializing default config: %v", err)
+		s.initDefaultConfig()
+		// 保存默认配置到文件
+		if err := s.saveConfig(); err != nil {
+			log.Printf("save default config failed: %v", err)
+		}
 	}
 }
 
@@ -154,4 +177,110 @@ func GetI18nKey(s string) string {
 		return s[1:]
 	}
 	return s
+}
+
+// initDefaultConfig initializes default config from PI data
+func (s *piService) initDefaultConfig() {
+	s.configMu.Lock()
+	defer s.configMu.Unlock()
+
+	config := &InterfaceConfig{
+		Controller: ConfigController{},
+		Resource:   "",
+		Task:       []ConfigTask{},
+	}
+
+	// if v2 data is not loaded, use empty config
+	if s.v2Loaded == nil || s.v2Loaded.Interface == nil {
+		s.config = config
+		return
+	}
+
+	iface := s.v2Loaded.Interface
+
+	// use the first controller
+	if len(iface.Controller) > 0 {
+		firstCtrl := iface.Controller[0]
+		config.Controller = ConfigController{
+			Name: firstCtrl.Name,
+			Type: firstCtrl.Type,
+		}
+	}
+
+	// use the first resource
+	if len(iface.Resource) > 0 {
+		config.Resource = iface.Resource[0].Name
+	}
+
+	// add all tasks, set DefaultCheck to checked
+	for _, task := range iface.Task {
+		config.Task = append(config.Task, ConfigTask{
+			ID:      uuid.New().String(),
+			Name:    task.Name,
+			Checked: task.DefaultCheck,
+			Option:  []ConfigTaskOption{},
+		})
+	}
+
+	s.config = config
+}
+
+// loadConfig loads config from file
+func (s *piService) loadConfig() error {
+	s.configMu.Lock()
+	defer s.configMu.Unlock()
+
+	data, err := os.ReadFile(s.configPath)
+	if err != nil {
+		return fmt.Errorf("read config file failed: %w", err)
+	}
+
+	var config InterfaceConfig
+	if err := json.Unmarshal(data, &config); err != nil {
+		return fmt.Errorf("parse config file failed: %w", err)
+	}
+
+	s.config = &config
+	return nil
+}
+
+// saveConfig saves config to file
+func (s *piService) saveConfig() error {
+	if s.config == nil {
+		return fmt.Errorf("config is nil")
+	}
+
+	data, err := json.MarshalIndent(s.config, "", "  ")
+	if err != nil {
+		return fmt.Errorf("marshal config failed: %w", err)
+	}
+
+	if err := os.WriteFile(s.configPath, data, 0644); err != nil {
+		return fmt.Errorf("write config file failed: %w", err)
+	}
+
+	return nil
+}
+
+// GetConfig gets the full config
+func (s *piService) GetConfig() *InterfaceConfig {
+	s.configMu.RLock()
+	defer s.configMu.RUnlock()
+
+	if s.config == nil {
+		return &InterfaceConfig{
+			Controller: ConfigController{},
+			Task:       []ConfigTask{},
+		}
+	}
+	return s.config
+}
+
+// SaveConfig saves the full config
+func (s *piService) SaveConfig(config *InterfaceConfig) error {
+	s.configMu.Lock()
+	s.config = config
+	s.configMu.Unlock()
+
+	return s.saveConfig()
 }
