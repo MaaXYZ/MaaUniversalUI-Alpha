@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue'
+  import { ref } from 'vue'
   import {
     TaskHeader,
     TaskPicker,
@@ -16,17 +16,6 @@
 
   /** Task picker component reference */
   const pickerRef = ref<InstanceType<typeof TaskPicker> | null>(null)
-
-  /** Listen to piStore loading completed to initialize the task list */
-  watch(
-    () => piStore.isLoaded,
-    (loaded) => {
-      if (loaded && taskListStore.taskList.length === 0) {
-        taskListStore.initFromPi()
-      }
-    },
-    { immediate: true }
-  )
 
   /** set task checked state */
   function handleCheckChange(id: string, checked: boolean) {
