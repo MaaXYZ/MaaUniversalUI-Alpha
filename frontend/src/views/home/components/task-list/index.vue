@@ -38,6 +38,11 @@
     taskListStore.removeTask(id)
   }
 
+  /** select task for configuration */
+  function handleSelect(id: string) {
+    taskListStore.selectTask(id)
+  }
+
   /** add task to list */
   function handleAddTask(task: pi.V2Task) {
     taskListStore.addTask(task, true)
@@ -136,8 +141,10 @@
           :checked="item.checked"
           :dragging="draggingId === item.id"
           :drag-over="dragOverId === item.id"
+          :selected="taskListStore.selectedTaskId === item.id"
           @update:checked="handleCheckChange(item.id, $event)"
           @remove="handleRemove"
+          @select="handleSelect"
           @dragstart="handleDragStart"
           @dragend="handleDragEnd"
           @dragenter="handleDragEnter"

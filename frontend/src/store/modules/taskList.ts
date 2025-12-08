@@ -11,6 +11,9 @@ export interface TaskListItem {
   checked: boolean
 }
 
+/** Option value for a task (option name -> selected value) */
+export type TaskOptionValues = Record<string, string>
+
 /** Generate UUID */
 function generateUUID(): string {
   return crypto.randomUUID()
@@ -24,6 +27,12 @@ export const useTaskListStore = defineStore('taskList', () => {
 
   /** Task list (tasks added by user) */
   const taskList = ref<TaskListItem[]>([])
+
+  /** Currently selected task id for option configuration */
+  const selectedTaskId = ref<string | null>(null)
+
+  /** Option values for each task (task id -> option values) */
+  const taskOptionValues = ref<Record<string, TaskOptionValues>>({})
 
   // ============ Getters ============
 
@@ -53,15 +62,35 @@ export const useTaskListStore = defineStore('taskList', () => {
   /** Whether there are still tasks that can be added */
   const hasAvailableTasks = computed(() => piStore.tasks.length > 0)
 
+  /** Currently selected task item */
+  const selectedTask = computed(() => {
+    if (!selectedTaskId.value) return null
+    return taskList.value.find((item) => item.id === selectedTaskId.value) ?? null
+  })
+
+  /** Get option values for a specific task */
+  const getTaskOptionValues = computed(() => {
+    return (taskId: string): TaskOptionValues => {
+      return taskOptionValues.value[taskId] ?? {}
+    }
+  })
+
+  /** Get current selected task's option values */
+  const selectedTaskOptionValues = computed(() => {
+    if (!selectedTaskId.value) return {}
+    return taskOptionValues.value[selectedTaskId.value] ?? {}
+  })
+
   // ============ Config Sync ============
 
-  /** Load task list from config */
+  /** Load task list from config (option sync is handled by backend) */
   function loadFromConfig() {
     const configTasks = configStore.tasks
     const piTasks = piStore.tasks
 
-    // clear existing task list
+    // clear existing task list and option values
     taskList.value = []
+    taskOptionValues.value = {}
 
     // restore task list from config
     for (const configTask of configTasks) {
@@ -72,6 +101,15 @@ export const useTaskListStore = defineStore('taskList', () => {
           task: piTask,
           checked: configTask.checked,
         })
+
+        // Restore option values from config (already synced by backend)
+        if (configTask.option && configTask.option.length > 0) {
+          const savedOptions: TaskOptionValues = {}
+          for (const opt of configTask.option) {
+            savedOptions[opt.name] = opt.value
+          }
+          taskOptionValues.value[configTask.id] = savedOptions
+        }
       }
     }
   }
@@ -80,14 +118,21 @@ export const useTaskListStore = defineStore('taskList', () => {
   async function syncToConfig() {
     // update task list in config
     configStore.setTasks(
-      taskList.value.map((item) =>
-        pi.ConfigTask.createFrom({
+      taskList.value.map((item) => {
+        // Convert option values to ConfigTaskOption array
+        const optionValues = taskOptionValues.value[item.id] ?? {}
+        const options: pi.ConfigTaskOption[] = Object.entries(optionValues).map(
+          ([name, value]) =>
+            pi.ConfigTaskOption.createFrom({ name, value })
+        )
+
+        return pi.ConfigTask.createFrom({
           id: item.id,
           name: item.task.name,
           checked: item.checked,
-          option: [],
+          option: options,
         })
-      )
+      })
     )
 
     // save to backend
@@ -99,11 +144,14 @@ export const useTaskListStore = defineStore('taskList', () => {
   /** Initialize task list (add default tasks according to default_check) */
   function initFromPi() {
     const defaultTasks = piStore.getDefaultCheckedTasks()
-    taskList.value = defaultTasks.map((task) => ({
-      id: generateUUID(),
-      task,
-      checked: true,
-    }))
+    taskList.value = defaultTasks.map((task) => {
+      const id = generateUUID()
+      return {
+        id,
+        task,
+        checked: true,
+      }
+    })
   }
 
   /** Add task to list (same task can be added repeatedly) */
@@ -130,6 +178,12 @@ export const useTaskListStore = defineStore('taskList', () => {
     const index = taskList.value.findIndex((item) => item.id === id)
     if (index !== -1) {
       taskList.value.splice(index, 1)
+      // Clear option values for removed task
+      delete taskOptionValues.value[id]
+      // Clear selection if removed task was selected
+      if (selectedTaskId.value === id) {
+        selectedTaskId.value = null
+      }
       syncToConfig()
       return true
     }
@@ -173,6 +227,8 @@ export const useTaskListStore = defineStore('taskList', () => {
   /** Clear task list */
   function clear() {
     taskList.value = []
+    selectedTaskId.value = null
+    taskOptionValues.value = {}
   }
 
   /** Reset (clear and re-initialize from PI) */
@@ -200,9 +256,150 @@ export const useTaskListStore = defineStore('taskList', () => {
     return taskList.value.findIndex((item) => item.id === id)
   }
 
+  /** Select a task for option configuration */
+  function selectTask(id: string | null) {
+    selectedTaskId.value = id
+  }
+
+  /** Set option value for a task */
+  function setOptionValue(taskId: string, optionName: string, value: string, inputName?: string) {
+    if (!taskOptionValues.value[taskId]) {
+      taskOptionValues.value[taskId] = {}
+    }
+    const taskOpts = taskOptionValues.value[taskId]
+    if (!taskOpts) return
+
+    const key = inputName ? `${optionName}.${inputName}` : optionName
+    const oldValue = taskOpts[key]
+    taskOpts[key] = value
+
+    // If this is a select/switch option, sync nested options for real-time UI update
+    if (!inputName && oldValue !== value) {
+      const option = piStore.getOptionByName(optionName)
+      if (option && (option.type === 'select' || option.type === 'switch' || !option.type)) {
+        // Remove old nested options
+        const oldCase = option.cases?.find((c) => c.name === oldValue)
+        if (oldCase?.option) {
+          removeNestedOptions(taskOpts, oldCase.option)
+        }
+
+        // Add new nested options with defaults
+        const newCase = option.cases?.find((c) => c.name === value)
+        if (newCase?.option) {
+          const defaults: TaskOptionValues = {}
+          initOptionDefaults(defaults, newCase.option)
+          for (const [k, v] of Object.entries(defaults)) {
+            if (!(k in taskOpts)) {
+              taskOpts[k] = v
+            }
+          }
+        }
+      }
+    }
+
+    syncToConfig()
+  }
+
+  /** Remove nested options recursively (for real-time UI update when switching options) */
+  function removeNestedOptions(taskOpts: TaskOptionValues, optionNames: string[]) {
+    for (const optionName of optionNames) {
+      const option = piStore.getOptionByName(optionName)
+      if (!option) continue
+
+      if (option.type === 'input') {
+        // Remove all input fields
+        if (option.inputs) {
+          for (const input of option.inputs) {
+            delete taskOpts[`${optionName}.${input.name}`]
+          }
+        }
+      } else {
+        // Remove the option itself
+        const currentValue = taskOpts[optionName]
+        delete taskOpts[optionName]
+
+        // Remove nested options of the currently selected case
+        const currentCase = option.cases?.find((c) => c.name === currentValue)
+        if (currentCase?.option) {
+          removeNestedOptions(taskOpts, currentCase.option)
+        }
+      }
+    }
+  }
+
+  /** Initialize option defaults (for real-time UI update when switching options) */
+  function initOptionDefaults(values: TaskOptionValues, optionNames: string[]) {
+    for (const optionName of optionNames) {
+      const option = piStore.getOptionByName(optionName)
+      if (!option) continue
+
+      if (option.type === 'select' || !option.type) {
+        let selectedCase: pi.V2OptionCase | undefined
+        if (option.default_case) {
+          values[optionName] = option.default_case
+          selectedCase = option.cases?.find((c) => c.name === option.default_case)
+        } else if (option.cases && option.cases.length > 0) {
+          const firstCase = option.cases[0]
+          if (firstCase) {
+            values[optionName] = firstCase.name
+            selectedCase = firstCase
+          }
+        } else {
+          values[optionName] = ''
+        }
+
+        if (selectedCase?.option && selectedCase.option.length > 0) {
+          initOptionDefaults(values, selectedCase.option)
+        }
+      } else if (option.type === 'switch') {
+        const cases = option.cases ?? []
+        const noCase = cases.find(
+          (c) => !['Yes', 'yes', 'Y', 'y'].includes(c.name)
+        )
+        values[optionName] = noCase?.name ?? 'No'
+
+        if (noCase?.option && noCase.option.length > 0) {
+          initOptionDefaults(values, noCase.option)
+        }
+      } else if (option.type === 'input') {
+        if (option.inputs) {
+          for (const input of option.inputs) {
+            let value = input.default ?? ''
+            if (!value) {
+              switch (input.pipeline_type) {
+                case 'bool':
+                  value = 'false'
+                  break
+                case 'int':
+                  value = '0'
+                  break
+                default:
+                  value = ''
+              }
+            }
+            values[`${optionName}.${input.name}`] = value
+          }
+        }
+      }
+    }
+  }
+
+  /** Set multiple option values for a task */
+  function setOptionValues(taskId: string, values: TaskOptionValues) {
+    taskOptionValues.value[taskId] = { ...taskOptionValues.value[taskId], ...values }
+    syncToConfig()
+  }
+
+  /** Get option value for a task */
+  function getOptionValue(taskId: string, optionName: string): string | undefined {
+    return taskOptionValues.value[taskId]?.[optionName]
+  }
+
   return {
     // State
     taskList,
+    selectedTaskId,
+    taskOptionValues,
 
     // Getters
     availableTasks,
@@ -211,6 +408,9 @@ export const useTaskListStore = defineStore('taskList', () => {
     checkedCount,
     totalCount,
     hasAvailableTasks,
+    selectedTask,
+    getTaskOptionValues,
+    selectedTaskOptionValues,
 
     // Config Sync
     loadFromConfig,
@@ -229,5 +429,9 @@ export const useTaskListStore = defineStore('taskList', () => {
     reset,
     moveTask,
     getTaskIndex,
+    selectTask,
+    setOptionValue,
+    setOptionValues,
+    getOptionValue,
   }
 })

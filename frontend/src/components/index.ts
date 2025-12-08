@@ -1,0 +1,1 @@
+export { default as MarkdownContent } from './markdown-content/index.vue'

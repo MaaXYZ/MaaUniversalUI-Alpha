@@ -12,6 +12,7 @@
     "@iconify/vue": "^5.0.0",
     "@primevue/icons": "^4.5.1",
     "@tailwindcss/vite": "^4.1.17",
+    "marked": "^17.0.1",
     "pinia": "^3.0.4",
     "primevue": "^4.5.1",
     "tailwind-merge": "^3.4.0",

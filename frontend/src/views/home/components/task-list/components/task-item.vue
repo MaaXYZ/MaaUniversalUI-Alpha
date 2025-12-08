@@ -10,6 +10,7 @@
     checked?: boolean
     dragging?: boolean
     dragOver?: boolean
+    selected?: boolean
   }>()
 
   const emit = defineEmits<{
@@ -18,6 +19,7 @@
     (e: 'dragstart', id: string): void
     (e: 'dragend'): void
     (e: 'dragenter', id: string): void
+    (e: 'select', id: string): void
   }>()
 
   const piStore = usePiStore()
@@ -31,13 +33,6 @@
     return props.task.name
   })
 
-  /** get description */
-  const description = computed(() => {
-    return props.task.description
-      ? piStore.resolveI18n(props.task.description)
-      : ''
-  })
-
   function handleCheckChange(event: Event) {
     const target = event.target as HTMLInputElement
     emit('update:checked', target.checked)
@@ -45,6 +40,10 @@
 
   function handleRemove() {
     emit('remove', props.id)
+  }
+
+  function handleSelect() {
+    emit('select', props.id)
   }
 </script>
 
@@ -55,9 +54,11 @@
       'opacity-50 scale-95': dragging,
       'border-indigo-400 dark:border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30':
         dragOver,
+      'border-indigo-500! dark:border-indigo-400! bg-indigo-100! dark:bg-indigo-900/40! ring-2 ring-indigo-500/20':
+        selected,
     }"
-    :title="description"
     draggable="true"
+    @click="handleSelect"
     @dragstart="emit('dragstart', id)"
     @dragend="emit('dragend')"
     @dragenter.prevent="emit('dragenter', id)"
