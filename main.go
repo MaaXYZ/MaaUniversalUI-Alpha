@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"embed"
+	"muu-alpha/backend/appconf"
 	"muu-alpha/backend/pi"
 
 	"github.com/wailsapp/wails/v2"
@@ -15,6 +16,7 @@ var assets embed.FS
 
 func main() {
 	piSrv := pi.PI()
+	appConfSrv := appconf.AppConf()
 
 	err := wails.Run(&options.App{
 		Title:  "muu-alpha",
@@ -27,9 +29,11 @@ func main() {
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
 		OnStartup: func(ctx context.Context) {
 			pi.Startup(ctx)
+			appconf.Startup(ctx)
 		},
 		Bind: []interface{}{
 			piSrv,
+			appConfSrv,
 		},
 	})
 
