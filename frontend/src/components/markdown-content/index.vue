@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { ref, watch, onMounted } from 'vue'
   import { marked } from 'marked'
-  import { ReadContent } from '@wails/go/pi/piService'
+  import { ReadContent } from '@wails/go/pi/service'
   import { usePiStore } from '@/store/modules'
 
   const props = defineProps<{

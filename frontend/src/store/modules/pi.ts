@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { V2Loaded as LoadV2, GetVersion } from '@wails/go/pi/piService'
+import { V2Loaded as LoadV2, GetVersion } from '@wails/go/pi/service'
 import { pi } from '@wails/go/models'
 
 export const PI_VERSION = {

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { GetConfig, SaveConfig } from '@wails/go/pi/piService'
+import { GetConfig, SaveConfig } from '@wails/go/pi/service'
 import { pi } from '@wails/go/models'
 
 export const useConfigStore = defineStore('config', () => {
