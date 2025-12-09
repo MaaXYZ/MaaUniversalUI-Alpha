@@ -158,7 +158,7 @@
     </div>
 
     <!-- Content Area -->
-    <div class="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin">
+    <div class="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-none">
       <!-- No task selected state -->
       <div
         v-if="!selectedTask"
@@ -335,29 +335,4 @@
   </div>
 </template>
 
-<style scoped>
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: #d1d5db;
-    border-radius: 3px;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: #9ca3af;
-  }
-
-  .dark .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: #4b5563;
-  }
-
-  .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: #6b7280;
-  }
-</style>
+<style scoped></style>

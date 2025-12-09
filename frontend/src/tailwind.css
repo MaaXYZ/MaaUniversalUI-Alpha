@@ -1,2 +1,33 @@
-@import "tailwindcss";
-@import "tailwindcss-primeui";
+@import 'tailwindcss';
+@import 'tailwindcss-primeui';
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility scrollbar-thin {
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 3px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+        background: #9ca3af;
+    }
+    .dark &::-webkit-scrollbar-thumb {
+        background: #4b5563;
+    }
+    .dark &::-webkit-scrollbar-thumb:hover {
+        background: #6b7280;
+    }
+}
+
+

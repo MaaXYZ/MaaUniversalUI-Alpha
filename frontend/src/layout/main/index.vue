@@ -6,7 +6,7 @@
 <template>
   <div class="flex flex-col h-screen">
     <app-header />
-    <div class="flex-1 relative">
+    <div class="flex-1 relative overflow-y-auto scrollbar-none">
       <div class="fixed top-1/2 -translate-y-1/2 left-7.5 z-10">
         <app-sider />
       </div>
