@@ -158,6 +158,14 @@ export const useTaskListStore = defineStore('taskList', () => {
   function addTask(task: pi.V2Task, checked = false): string {
     const id = generateUUID()
     taskList.value.push({ id, task, checked })
+
+    // Initialize default option values for the new task
+    if (task.option && task.option.length > 0) {
+      const defaults: TaskOptionValues = {}
+      initOptionDefaults(defaults, task.option)
+      taskOptionValues.value[id] = defaults
+    }
+
     syncToConfig()
     return id
   }
@@ -167,6 +175,14 @@ export const useTaskListStore = defineStore('taskList', () => {
     const ids = tasks.map((task) => {
       const id = generateUUID()
       taskList.value.push({ id, task, checked })
+
+      // Initialize default option values for each new task
+      if (task.option && task.option.length > 0) {
+        const defaults: TaskOptionValues = {}
+        initOptionDefaults(defaults, task.option)
+        taskOptionValues.value[id] = defaults
+      }
+
       return id
     })
     syncToConfig()
