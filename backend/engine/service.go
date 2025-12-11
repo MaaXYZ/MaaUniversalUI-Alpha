@@ -87,14 +87,14 @@ func (s *service) Start() {
 		if tasker != nil {
 			tasker.Destroy()
 		}
+		if agent != nil {
+			agent.Destroy()
+		}
 		if res != nil {
 			res.Destroy()
 		}
 		if ctrl != nil {
 			ctrl.Destroy()
-		}
-		if agent != nil {
-			agent.Destroy()
 		}
 		if agentCmd != nil && agentCmd.Process != nil {
 			_ = agentCmd.Process.Kill()
@@ -404,16 +404,16 @@ func (s *service) Stop() {
 		tasker.Destroy()
 	}
 
+	if agent != nil {
+		agent.Destroy()
+	}
+
 	if res != nil {
 		res.Destroy()
 	}
 
 	if ctrl != nil {
 		ctrl.Destroy()
-	}
-
-	if agent != nil {
-		agent.Destroy()
 	}
 
 	if agentCmd != nil && agentCmd.Process != nil {
