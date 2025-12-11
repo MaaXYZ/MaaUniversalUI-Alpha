@@ -349,6 +349,13 @@ func (s *service) createAgent(iface *pi.V2Interface, res *maa.Resource) (*maa.Ag
 	id, _ := agent.Identifier()
 	cmd := exec.Command(iface.Agent.ChildExec, append(iface.Agent.ChildArgs, id)...)
 
+	exeDir, err := s.getExecutableDir()
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	cmd.Dir = exeDir
+
 	if err := cmd.Start(); err != nil {
 		cleanup()
 		return nil, nil, fmt.Errorf("failed to start agent child process: %w", err)
