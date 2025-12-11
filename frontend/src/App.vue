@@ -4,10 +4,13 @@
   import { usePiStore } from '@/store/modules/pi'
   import { useConfigStore } from '@/store/modules/config'
   import { useTaskListStore } from '@/store/modules/taskList'
+  import { useGlobalEvents } from '@/composables'
 
   const piStore = usePiStore()
   const configStore = useConfigStore()
   const taskListStore = useTaskListStore()
+
+  useGlobalEvents()
 
   onMounted(async () => {
     await piStore.load()
