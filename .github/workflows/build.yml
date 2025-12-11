@@ -66,6 +66,15 @@ jobs:
         run: |
           cd frontend
           pnpm install --frozen-lockfile
+
+      - name: Download MaaFramework
+        uses: robinraju/release-downloader@v1
+        with:
+          repository: MaaXYZ/MaaFramework
+          tag: v5.2.4
+          fileName: "MAA-linux-x86_64*"
+          out-file-path: "deps/MaaFramework"
+          extract: true
         
       - name: Build wails app
         run: |

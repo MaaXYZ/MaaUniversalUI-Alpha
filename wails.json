@@ -6,6 +6,9 @@
   "frontend:build": "pnpm run build",
   "frontend:dev:watcher": "pnpm run dev",
   "frontend:dev:serverUrl": "auto",
+  "preBuildHooks": {
+    "*/*": "go run ../../scripts/copy-deps -C ../.."
+  },
   "author": {
     "name": "dongwlin",
     "email": "dongwlin@hotmail.com"
