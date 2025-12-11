@@ -176,7 +176,11 @@ func (s *service) Start() {
 			}
 
 			task.StartedAt = time.Now()
-			job := tasker.PostTask(task.Entry, task.PipelineOverride).Wait()
+			pipelineOverride := "{}"
+			if string(task.PipelineOverride) != "" {
+				pipelineOverride = string(task.PipelineOverride)
+			}
+			job := tasker.PostTask(task.Entry, pipelineOverride).Wait()
 			task.Status = job.Status()
 			task.FinishedAt = time.Now()
 		}
