@@ -1,7 +1,13 @@
+github.com/MaaXYZ/maa-framework-go/v3 v3.2.0 h1:ZI7wiao/8zBRHq4qMBS+Q5ZFPxRC5VLuatLNo06rKs8=
+github.com/MaaXYZ/maa-framework-go/v3 v3.2.0/go.mod h1:/mQzE6vukDG/eIjFjJepfq4jtxnQdYr+DuKIBYKNjQs=
+github.com/MaaXYZ/maa-framework-go/v3 v3.2.1 h1:QMDafsjXzwt4z8pFWA2Zf+Ctzbxqaa4Gs56jnLCocJg=
+github.com/MaaXYZ/maa-framework-go/v3 v3.2.1/go.mod h1:/mQzE6vukDG/eIjFjJepfq4jtxnQdYr+DuKIBYKNjQs=
 github.com/bep/debounce v1.2.1 h1:v67fRdBA9UQu2NhLFXrSg0Brw7CexQekrBwDMM8bzeY=
 github.com/bep/debounce v1.2.1/go.mod h1:H8yggRPQKLUhUoqrJC1bO2xNya7vanpDl7xR3ISbCJ0=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/ebitengine/purego v0.9.1 h1:a/k2f2HQU3Pi399RPW1MOaZyhKJL9w/xFpKAg4q1s0A=
+github.com/ebitengine/purego v0.9.1/go.mod h1:iIjxzd6CiRiOG0UyXP+V1+jWqUXVjPKLAI0mRfJZTmQ=
 github.com/go-ole/go-ole v1.3.0 h1:Dt6ye7+vXGIKZ7Xtk4s6/xVdGDQynvom7xCFEdWr6uE=
 github.com/go-ole/go-ole v1.3.0/go.mod h1:5LS6F96DhAwUc7C+1HLexzMXY1xGRSryjyPPKW6zv78=
 github.com/godbus/dbus/v5 v5.1.0 h1:4KLkAxT3aOY8Li4FRJe/KvhoNFFxo0m6fNuFUO8QJUk=

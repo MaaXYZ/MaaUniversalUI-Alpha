@@ -1,7 +1,10 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+  import { ResSettingsCard, CtrlSettingsCard } from './components'
+</script>
 
 <template>
-  <div>Settings</div>
+  <div class="pl-24 space-y-4">
+    <res-settings-card />
+    <ctrl-settings-card />
+  </div>
 </template>
-
-<style scoped></style>

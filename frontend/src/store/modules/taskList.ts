@@ -3,6 +3,8 @@ import { ref, computed } from 'vue'
 import { usePiStore } from './pi'
 import { useConfigStore } from './config'
 import { pi } from '@wails/go/models'
+import { Start, Stop, GetIsRunning } from '@wails/go/engine/service'
+import { EventsOn } from '@wails/runtime/runtime'
 
 /** Task item (contains task information and checked state) */
 export interface TaskListItem {
@@ -33,6 +35,9 @@ export const useTaskListStore = defineStore('taskList', () => {
 
   /** Option values for each task (task id -> option values) */
   const taskOptionValues = ref<Record<string, TaskOptionValues>>({})
+
+  /** Engine running state */
+  const isRunning = ref(false)
 
   // ============ Getters ============
 
@@ -411,11 +416,55 @@ export const useTaskListStore = defineStore('taskList', () => {
     return taskOptionValues.value[taskId]?.[optionName]
   }
 
+  // ============ Engine Control ============
+
+  /** Unsubscribe function for running state event */
+  let unsubscribeRunning: (() => void) | null = null
+
+  /** Initialize running state event listener */
+  async function initRunningState() {
+    // Sync initial state from backend
+    isRunning.value = await GetIsRunning()
+
+    // Subscribe to running state changes
+    unsubscribeRunning = EventsOn('engine:running', (running: boolean) => {
+      isRunning.value = running
+    })
+  }
+
+  /** Cleanup running state event listener */
+  function cleanupRunningState() {
+    if (unsubscribeRunning) {
+      unsubscribeRunning()
+      unsubscribeRunning = null
+    }
+  }
+
+  /** Start the engine */
+  async function startEngine() {
+    await Start()
+  }
+
+  /** Stop the engine */
+  async function stopEngine() {
+    await Stop()
+  }
+
+  /** Toggle engine running state */
+  async function toggleEngine() {
+    if (isRunning.value) {
+      await stopEngine()
+    } else {
+      await startEngine()
+    }
+  }
+
   return {
     // State
     taskList,
     selectedTaskId,
     taskOptionValues,
+    isRunning,
 
     // Getters
     availableTasks,
@@ -449,5 +498,12 @@ export const useTaskListStore = defineStore('taskList', () => {
     setOptionValue,
     setOptionValues,
     getOptionValue,
+
+    // Engine Control
+    initRunningState,
+    cleanupRunningState,
+    startEngine,
+    stopEngine,
+    toggleEngine,
   }
 })
