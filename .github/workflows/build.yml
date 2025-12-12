@@ -21,6 +21,7 @@ jobs:
     strategy:
       matrix:
         arch: [amd64, arm64]
+      fail-fast: false
 
     steps:
       - name: Checkout
@@ -93,6 +94,7 @@ jobs:
     strategy:
       matrix:
         arch: [amd64, arm64]
+      fail-fast: false
 
     steps:
       - name: Checkout
@@ -170,6 +172,7 @@ jobs:
     strategy:
       matrix:
         arch: [ arm64, amd64 ]
+      fail-fast: false
 
     steps:
       - name: Checkout
