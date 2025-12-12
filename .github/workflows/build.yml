@@ -3,21 +3,96 @@ name: build
 on:
   push:
     branches:
-      - "**"
+      - '**'
     paths-ignore:
-      - "README.md"
+      - 'README.md'
 
   pull_request:
     branches:
-      - "**"
+      - '**'
     paths-ignore:
-      - "README.md"
+      - 'README.md'
 
   workflow_dispatch:
 
 jobs:
-  ubuntu:
+  windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        arch: [amd64, arm64]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: 'stable'
+
+      - name: Install Dependencies
+        run: |
+          go mod tidy
+
+      - name: Cache Wails CLI
+        id: cache-wails
+        uses: actions/cache@v4
+        with:
+          path: ~/go/bin/wails
+          key: ${{ runner.os }}-${{ matrix.arch }}-wails-cli-v2
+
+      - name: Install wails
+        if: steps.cache-wails.outputs.cache-hit != 'true'
+        run: |
+          go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: 'pnpm'
+          cache-dependency-path: './frontend/pnpm-lock.yaml'
+
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          pnpm install --frozen-lockfile
+
+      - name: Download MaaFramework
+        uses: robinraju/release-downloader@v1
+        with:
+          repository: MaaXYZ/MaaFramework
+          tag: v5.2.4
+          fileName: "MAA-win-${{
+            (matrix.arch == 'amd64' && 'x86_64') ||
+            (matrix.arch == 'arm64' && 'aarch64')
+            }}*"
+          out-file-path: 'deps/MaaFramework'
+          extract: true
+
+      - name: Build wails app
+        run: |
+          wails build -platform windows/${{ matrix.arch }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: muu-alpha-windows-${{ matrix.arch }}
+          path: build/bin/
+          if-no-files-found: error
+
+  linux:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [amd64, arm64]
 
     steps:
       - name: Checkout
@@ -42,19 +117,19 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/go/bin/wails
-          key: ${{ runner.os }}-wails-cli-v2
+          key: ${{ runner.os }}-${{ matrix.arch }}-wails-cli-v2
 
       - name: Install wails
         if: steps.cache-wails.outputs.cache-hit != 'true'
         run: |
           go install github.com/wailsapp/wails/v2/cmd/wails@latest
 
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
         with:
           version: 10
           run_install: false
-  
+
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
@@ -72,17 +147,91 @@ jobs:
         with:
           repository: MaaXYZ/MaaFramework
           tag: v5.2.4
-          fileName: "MAA-linux-x86_64*"
-          out-file-path: "deps/MaaFramework"
+          fileName: "MAA-linux-${{
+            (matrix.arch == 'amd64' && 'x86_64') ||
+            (matrix.arch == 'arm64' && 'aarch64')
+            }}*"
+          out-file-path: 'deps/MaaFramework'
           extract: true
-        
+
       - name: Build wails app
         run: |
-          wails build -tags webkit2_41
+          wails build -platform linux/${{ matrix.arch }} -tags webkit2_41
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v5
         with:
-          name: muu-alpha-linux-amd64
+          name: muu-alpha-linux-${{ matrix.arch }}
+          path: build/bin/
+          if-no-files-found: error
+
+  darwin:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        arch: [ arm64, amd64 ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: 'stable'
+
+      - name: Install Dependencies
+        run: |
+          go mod tidy
+
+      - name: Cache Wails CLI
+        id: cache-wails
+        uses: actions/cache@v4
+        with:
+          path: ~/go/bin/wails
+          key: ${{ runner.os }}-${{ matrix.arch }}-wails-cli-v2
+
+      - name: Install wails
+        if: steps.cache-wails.outputs.cache-hit != 'true'
+        run: |
+          go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: 'pnpm'
+          cache-dependency-path: './frontend/pnpm-lock.yaml'
+
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          pnpm install --frozen-lockfile
+
+      - name: Download MaaFramework
+        uses: robinraju/release-downloader@v1
+        with:
+          repository: MaaXYZ/MaaFramework
+          tag: v5.2.4
+          fileName: "MAA-macos-${{
+            (matrix.arch == 'amd64' && 'x86_64') ||
+            (matrix.arch == 'arm64' && 'aarch64')
+            }}*"
+          out-file-path: 'deps/MaaFramework'
+
+      - name: Build wails app
+        run: |
+          wails build -platform darwin/${{ matrix.arch }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: muu-alpha-darwin-${{ matrix.arch }}
           path: build/bin/
           if-no-files-found: error
