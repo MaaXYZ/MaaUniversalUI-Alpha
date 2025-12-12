@@ -108,12 +108,12 @@ jobs:
             gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
             libc6-dev-arm64-cross
 
-            sudo tee /etc/apt/sources.list <<EOF
-            deb http://archive.ubuntu.com/ubuntu/ noble main restricted universe multiverse
-            deb http://archive.ubuntu.com/ubuntu/ noble-updates main restricted universe multiverse
-            deb http://archive.ubuntu.com/ubuntu/ noble-backports main restricted universe multiverse
-            deb http://security.ubuntu.com/ubuntu/ noble-security main restricted universe multiverse
-            EOF
+            sudo > /etc/apt/sources.list
+
+            sudo echo "deb http://archive.ubuntu.com/ubuntu/ noble main restricted universe multiverse" >> /etc/apt/sources.list
+            sudo echo "deb http://archive.ubuntu.com/ubuntu/ noble-updates main restricted universe multiverse" >> /etc/apt/sources.list
+            sudo echo "deb http://archive.ubuntu.com/ubuntu/ noble-backports main restricted universe multiverse" >> /etc/apt/sources.list
+            sudo echo "deb http://security.ubuntu.com/ubuntu/ noble-security main restricted universe multiverse" >> /etc/apt/sources.list
 
             sudo dpkg --add-architecture arm64  
 
