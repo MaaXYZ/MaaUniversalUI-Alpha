@@ -108,8 +108,9 @@ jobs:
             gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
             libc6-dev-arm64-cross
 
+            sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
             sudo tee /etc/apt/sources.list > /dev/null <<< ""
-      
+            
             sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ noble main restricted universe multiverse"
             sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ noble-updates main restricted universe multiverse"
             sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ noble-backports main restricted universe multiverse"
@@ -121,14 +122,15 @@ jobs:
             sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ noble-security main restricted universe multiverse"
             
             sudo tee /etc/apt/apt.conf.d/99arch-priority > /dev/null <<< ""
-            sudo tee -a /etc/apt/apt.conf.d/99arch-priority > /dev/null <<< "APT::Architectures { \"amd64\"; \"arm64\"; } ;"
-            sudo tee -a /etc/apt/apt.conf.d/99arch-priority > /dev/null <<< "APT::Architecture \"amd64\";"
-
+            sudo tee -a /etc/apt/apt.conf.d/99arch-priority > /dev/null <<< "APT::Architectures \"amd64\"; \"arm64\";"
+            sudo tee -a /etc/apt/apt.conf.d/99arch-priority > /dev/null <<< "APT::Get::AllowUnauthenticated \"false\";"
+            sudo tee -a /etc/apt/apt.conf.d/99arch-priority > /dev/null <<< "Acquire::http::Pipeline-Depth \"0\";"
+            
             sudo dpkg --add-architecture arm64  
-
+          
             sudo apt-get clean
             sudo rm -rf /var/lib/apt/lists/*
-            sudo apt-get update -o Acquire::ForceIPv4=true
+            sudo apt-get update -o Acquire::ForceIPv4=true -o APT::Ignore-Missing-Architecture=true || true
 
             sudo apt-get install -y --no-install-recommends \
             libgtk-3-dev:arm64 libwebkit2gtk-4.1-dev:arm64
