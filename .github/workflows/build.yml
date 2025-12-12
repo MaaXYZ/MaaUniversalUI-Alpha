@@ -168,6 +168,7 @@ jobs:
       - name: Build wails app
         env:
           CC: ${{ matrix.arch == 'arm64' && 'aarch64-linux-gnu-gcc' || '' }}
+          CGO_ENABLED: ${{ matrix.arch == 'arm64' && '0' || '1' }}
           PKG_CONFIG_PATH: ${{ matrix.arch == 'arm64' && '/usr/lib/aarch64-linux-gnu/pkgconfig' || '' }}
         run: |
           wails build -platform linux/${{ matrix.arch }} -tags webkit2_41
