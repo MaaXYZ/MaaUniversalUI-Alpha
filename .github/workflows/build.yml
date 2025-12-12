@@ -170,7 +170,6 @@ jobs:
       - name: Build wails app
         env:
           CC: ${{ matrix.arch == 'arm64' && 'aarch64-linux-gnu-gcc' || '' }}
-          CGO_ENABLED: ${{ matrix.arch == 'arm64' && '1' || '1' }}
           PKG_CONFIG_PATH: ${{ matrix.arch == 'arm64' && '/usr/lib/aarch64-linux-gnu/pkgconfig' || '' }}
           C_INCLUDE_PATH: ${{ matrix.arch == 'arm64' && '/usr/aarch64-linux-gnu/include' || '' }}
           CPLUS_INCLUDE_PATH: ${{ matrix.arch == 'arm64' && '/usr/aarch64-linux-gnu/include' || '' }}
