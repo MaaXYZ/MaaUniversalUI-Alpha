@@ -108,7 +108,7 @@ jobs:
             gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
             libc6-dev-arm64-cross
 
-            sudo > /etc/apt/sources.list
+            sudo tee /etc/apt/sources.list > /dev/null <<< ""
 
             sudo echo "deb http://archive.ubuntu.com/ubuntu/ noble main restricted universe multiverse" >> /etc/apt/sources.list
             sudo echo "deb http://archive.ubuntu.com/ubuntu/ noble-updates main restricted universe multiverse" >> /etc/apt/sources.list
