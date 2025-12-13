@@ -6,8 +6,10 @@
   "frontend:build": "pnpm run build",
   "frontend:dev:watcher": "pnpm run dev",
   "frontend:dev:serverUrl": "auto",
-  "preBuildHooks": {
-    "*/*": "go run ../../scripts/copy-deps -C ../.."
+  "postBuildHooks": {
+    "windows/*": "go run ../../scripts/copy-deps -C ../..",
+    "linux/*": "go run ../../scripts/copy-deps -C ../..",
+    "darwin/*": "go run ../../scripts/copy-deps -C ../.. -o build/bin/muu-alpha.app/Contents/MacOS"
   },
   "author": {
     "name": "dongwlin",

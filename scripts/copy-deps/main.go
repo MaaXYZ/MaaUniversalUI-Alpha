@@ -12,32 +12,34 @@ import (
 type DepConfig struct {
 	Name   string // Name of the dependency (for logging)
 	SrcDir string // Source directory (relative to project root)
-	DstDir string // Destination directory (relative to project root)
+	DstDir string // Destination directory (relative to output base directory)
 }
 
 // Dependencies to copy. Add new entries here to copy additional dependencies.
+// DstDir is relative to the output base directory (default: build/bin)
 var deps = []DepConfig{
 	{
 		Name:   "MaaFramework",
 		SrcDir: "deps/MaaFramework/bin",
-		DstDir: "build/bin/lib",
+		DstDir: "lib",
 	},
 	{
 		Name:   "MaaAgentBinary",
 		SrcDir: "deps/MaaFramework/share/MaaAgentBinary",
-		DstDir: "build/bin/share/MaaAgentBinary",
+		DstDir: "share/MaaAgentBinary",
 	},
 	// Add more dependencies here, e.g.:
 	// {
 	// 	Name:   "AnotherDep",
 	// 	SrcDir: "deps/AnotherDep/lib",
-	// 	DstDir: "build/bin/plugins",
+	// 	DstDir: "plugins",
 	// },
 }
 
 var (
-	forceFlag = flag.Bool("f", false, "Force copy all files even if they exist")
-	dirFlag   = flag.String("C", "", "Change to directory before running (project root)")
+	forceFlag  = flag.Bool("f", false, "Force copy all files even if they exist")
+	dirFlag    = flag.String("C", "", "Change to directory before running (project root)")
+	outputFlag = flag.String("o", "build/bin", "Output base directory for dependencies")
 )
 
 func main() {
@@ -65,7 +67,7 @@ func main() {
 		fmt.Printf("Processing dependency: %s\n", dep.Name)
 
 		srcDir := filepath.Join(execPath, dep.SrcDir)
-		dstDir := filepath.Join(execPath, dep.DstDir)
+		dstDir := filepath.Join(execPath, *outputFlag, dep.DstDir)
 
 		// Check if source directory exists
 		if _, err := os.Stat(srcDir); os.IsNotExist(err) {
