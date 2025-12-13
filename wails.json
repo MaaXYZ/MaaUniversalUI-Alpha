@@ -8,7 +8,8 @@
   "frontend:dev:serverUrl": "auto",
   "postBuildHooks": {
     "windows/*": "go run ../../scripts/copy-deps -C ../..",
-    "linux/*": "go run ../../scripts/copy-deps -C ../.."
+    "linux/*": "go run ../../scripts/copy-deps -C ../..",
+    "darwin/*": "go run ../../scripts/copy-deps -C ../.. -o build/bin/muu-alpha.app/Contents/MacOS"
   },
   "author": {
     "name": "dongwlin",

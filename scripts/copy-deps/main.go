@@ -71,36 +71,49 @@ func main() {
 
 		// Check if source directory exists
 		if _, err := os.Stat(srcDir); os.IsNotExist(err) {
-			fmt.Fprintf(os.Stderr, "Warning: source directory does not exist for %s: %s (skipped)\n", dep.Name, srcDir)
+			errMsg := fmt.Sprintf("Source directory does not exist for %s: %s", dep.Name, srcDir)
+			fmt.Fprintf(os.Stderr, "%s\n", errMsg)
+			totalStats.errors = append(totalStats.errors, errMsg)
 			continue
 		}
 
 		// Ensure destination directory exists
 		if err := os.MkdirAll(dstDir, 0755); err != nil {
-			fmt.Fprintf(os.Stderr, "Failed to create destination directory for %s: %v\n", dep.Name, err)
-			os.Exit(1)
+			errMsg := fmt.Sprintf("Failed to create destination directory for %s: %v", dep.Name, err)
+			fmt.Fprintf(os.Stderr, "%s\n", errMsg)
+			totalStats.errors = append(totalStats.errors, errMsg)
+			continue
 		}
 
 		// Copy directory contents
-		if err := copyDir(srcDir, dstDir, totalStats); err != nil {
-			fmt.Fprintf(os.Stderr, "Copy failed for %s: %v\n", dep.Name, err)
-			os.Exit(1)
-		}
+		copyDir(srcDir, dstDir, totalStats)
 	}
 
-	fmt.Printf("Done: %d copied, %d skipped (exists)\n", totalStats.copied, totalStats.skipped)
+	fmt.Printf("Done: %d copied, %d skipped (exists), %d errors\n", totalStats.copied, totalStats.skipped, len(totalStats.errors))
+
+	if len(totalStats.errors) > 0 {
+		fmt.Fprintf(os.Stderr, "\nErrors occurred during copy:\n")
+		for _, err := range totalStats.errors {
+			fmt.Fprintf(os.Stderr, "  - %s\n", err)
+		}
+		os.Exit(1)
+	}
 }
 
 type copyStats struct {
 	copied  int
 	skipped int
+	errors  []string
 }
 
 // copyDir recursively copies directory contents
-func copyDir(src, dst string, stats *copyStats) error {
+func copyDir(src, dst string, stats *copyStats) {
 	entries, err := os.ReadDir(src)
 	if err != nil {
-		return fmt.Errorf("failed to read directory %s: %w", src, err)
+		errMsg := fmt.Sprintf("failed to read directory %s: %v", src, err)
+		fmt.Fprintf(os.Stderr, "%s\n", errMsg)
+		stats.errors = append(stats.errors, errMsg)
+		return
 	}
 
 	for _, entry := range entries {
@@ -110,12 +123,13 @@ func copyDir(src, dst string, stats *copyStats) error {
 		if entry.IsDir() {
 			// Create subdirectory
 			if err := os.MkdirAll(dstPath, 0755); err != nil {
-				return fmt.Errorf("failed to create directory %s: %w", dstPath, err)
+				errMsg := fmt.Sprintf("failed to create directory %s: %v", dstPath, err)
+				fmt.Fprintf(os.Stderr, "%s\n", errMsg)
+				stats.errors = append(stats.errors, errMsg)
+				continue
 			}
 			// Recursively copy subdirectory
-			if err := copyDir(srcPath, dstPath, stats); err != nil {
-				return err
-			}
+			copyDir(srcPath, dstPath, stats)
 		} else {
 			// Skip if file exists and not force mode
 			if !*forceFlag {
@@ -127,14 +141,15 @@ func copyDir(src, dst string, stats *copyStats) error {
 			}
 
 			if err := copyFile(srcPath, dstPath); err != nil {
-				return err
+				errMsg := fmt.Sprintf("failed to copy file %s: %v", srcPath, err)
+				fmt.Fprintf(os.Stderr, "%s\n", errMsg)
+				stats.errors = append(stats.errors, errMsg)
+				continue
 			}
 			fmt.Printf("Copied: %s\n", entry.Name())
 			stats.copied++
 		}
 	}
-
-	return nil
 }
 
 // copyFile copies a single file

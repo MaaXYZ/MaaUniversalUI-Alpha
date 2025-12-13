@@ -266,15 +266,12 @@ jobs:
             (matrix.arch == 'arm64' && 'aarch64')
             }}*"
           out-file-path: 'deps/MaaFramework'
+          extract: true
 
       - name: Build wails app
         run: |
           wails build -platform darwin/${{ matrix.arch }}
-
-      - name: Copy Dependencies
-        run: |
-          go run ./scripts/copy-deps -o build/bin/muu-alpha.app/Contents/MacOS
-
+      
       - name: Upload Artifact
         uses: actions/upload-artifact@v5
         with:
