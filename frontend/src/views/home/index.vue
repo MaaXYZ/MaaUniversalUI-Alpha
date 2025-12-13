@@ -7,7 +7,7 @@
     <task-list />
     <options-panel />
     <div class="">
-      <TaskControlButton />
+      <task-control-button />
     </div>
   </div>
 </template>
