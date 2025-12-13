@@ -29,7 +29,7 @@ func Startup(ctx context.Context) {
 	}
 	exeDir := filepath.Dir(exePath)
 	libDir := filepath.Join(exeDir, "lib")
-	logDir := filepath.Join(exeDir, "log")
+	logDir := filepath.Join(exeDir, "logs")
 
 	maa.Init(
 		maa.WithLibDir(libDir),
