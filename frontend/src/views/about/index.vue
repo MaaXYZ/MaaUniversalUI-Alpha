@@ -12,12 +12,26 @@
   const appInfo = ref<system.AppInfo>()
   const isLoading = ref(true)
 
+  function formatISODateTimeToLocal(value?: string) {
+    if (!value) return '未知'
+
+    const date = new Date(value)
+    if (Number.isNaN(date.getTime())) return value
+
+    const pad2 = (n: number) => String(n).padStart(2, '0')
+    return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(
+      date.getDate()
+    )} ${pad2(date.getHours())}:${pad2(date.getMinutes())}:${pad2(
+      date.getSeconds()
+    )}`
+  }
+
   const projectVersion = computed(() => piStore.version || '未知')
 
   const buildInfoList = computed(() => [
     {
       label: '构建时间',
-      value: appInfo.value?.build_at || '未知',
+      value: formatISODateTimeToLocal(appInfo.value?.build_at),
       icon: 'fluent:calendar-20-regular',
     },
     {
@@ -89,7 +103,6 @@
 
 <template>
   <div class="pl-24 space-y-6 max-w-4xl">
-
     <header class="animate-fade-in">
       <div class="flex items-center gap-4 mb-2">
         <div
