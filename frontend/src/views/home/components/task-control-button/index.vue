@@ -1,13 +1,11 @@
 <script setup lang="ts">
   import { useTaskListStore } from '@/store/modules/taskList'
   import { storeToRefs } from 'pinia'
-  import { ref, watch, computed } from 'vue'
+  import { ref, watch } from 'vue'
 
   const taskListStore = useTaskListStore()
   const { isRunning } = storeToRefs(taskListStore)
   const isStopping = ref<boolean>(false)
-
-  const disabled = computed(() => isStopping.value)
 
   watch(isRunning, (newVal, oldVal) => {
     if (oldVal === true && newVal === false) {
@@ -16,7 +14,7 @@
   })
 
   const handleClick = async () => {
-    if (disabled.value) return
+    if (isStopping.value) return
 
     if (isRunning.value) {
       isStopping.value = true
@@ -30,7 +28,7 @@
   <div
     class="w-60 h-13 flex justify-center items-center rounded-2xl transition-all duration-300 select-none"
     :class="[
-      disabled
+      isStopping
         ? 'bg-gray-400 cursor-not-allowed'
         : isRunning
         ? 'bg-rose-500 hover:bg-rose-600 cursor-pointer'
