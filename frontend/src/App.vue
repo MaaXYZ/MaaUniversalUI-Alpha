@@ -13,7 +13,6 @@
   useGlobalEvents()
 
   onMounted(async () => {
-    // 加载数据
     await piStore.load()
     await configStore.load()
 

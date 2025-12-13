@@ -1,5 +1,6 @@
 
 /* Primary and Surface Palettes */
+/* Using Tailwind gray color palette for consistency */
 :root {
     --p-primary-50: #ecfdf5;
     --p-primary-100: #d1fae5;
@@ -12,18 +13,19 @@
     --p-primary-800: #065f46;
     --p-primary-900: #064e3b;
     --p-primary-950: #022c22;
+    /* Tailwind gray palette */
     --p-surface-0: #ffffff;
-    --p-surface-50: #fafafa;
-    --p-surface-100: #f4f4f5;
-    --p-surface-200: #e4e4e7;
-    --p-surface-300: #d4d4d8;
-    --p-surface-400: #a1a1aa;
-    --p-surface-500: #71717a;
-    --p-surface-600: #52525b;
-    --p-surface-700: #3f3f46;
-    --p-surface-800: #27272a;
-    --p-surface-900: #18181b;
-    --p-surface-950: #09090b;
+    --p-surface-50: #f9fafb;
+    --p-surface-100: #f3f4f6;
+    --p-surface-200: #e5e7eb;
+    --p-surface-300: #d1d5db;
+    --p-surface-400: #9ca3af;
+    --p-surface-500: #6b7280;
+    --p-surface-600: #4b5563;
+    --p-surface-700: #374151;
+    --p-surface-800: #1f2937;
+    --p-surface-900: #111827;
+    --p-surface-950: #030712;
     --p-content-border-radius: 6px;
 }
 
@@ -48,28 +50,35 @@
 
 /*
  * Dark Mode
- * Defaults to system, change the dark variant selector to match the CSS variable configuration.
- * For example;
- * @custom-variant dark (&:where(.app-dark, .app-dark *));
- * should match to;
- * :root[class="app-dark"]
+ * Uses class-based dark mode for manual theme switching
+ * The 'dark' class is applied to the html element
 */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --p-primary-color: var(--p-primary-400);
-        --p-primary-contrast-color: var(--p-surface-900);
-        --p-primary-hover-color: var(--p-primary-300);
-        --p-primary-active-color: var(--p-primary-200);
-        --p-content-border-color: var(--p-surface-700);
-        --p-content-hover-background: var(--p-surface-800);
-        --p-content-hover-color: var(--p-surface-0);
-        --p-highlight-background: color-mix(in srgb, var(--p-primary-400), transparent 84%);
-        --p-highlight-color: rgba(255, 255, 255, 0.87);
-        --p-highlight-focus-background: color-mix(in srgb, var(--p-primary-400), transparent 76%);
-        --p-highlight-focus-color: rgba(255, 255, 255, 0.87);
-        --p-text-color: var(--p-surface-0);
-        --p-text-hover-color: var(--p-surface-0);
-        --p-text-muted-color: var(--p-surface-400);
-        --p-text-hover-muted-color: var(--p-surface-300);
-    }
+:root.dark {
+    --p-primary-color: var(--p-primary-400);
+    --p-primary-contrast-color: var(--p-surface-900);
+    --p-primary-hover-color: var(--p-primary-300);
+    --p-primary-active-color: var(--p-primary-200);
+    --p-content-border-color: var(--p-surface-700);
+    --p-content-hover-background: var(--p-surface-800);
+    --p-content-hover-color: var(--p-surface-0);
+    --p-highlight-background: color-mix(in srgb, var(--p-primary-400), transparent 84%);
+    --p-highlight-color: rgba(255, 255, 255, 0.87);
+    --p-highlight-focus-background: color-mix(in srgb, var(--p-primary-400), transparent 76%);
+    --p-highlight-focus-color: rgba(255, 255, 255, 0.87);
+    --p-text-color: var(--p-surface-0);
+    --p-text-hover-color: var(--p-surface-0);
+    --p-text-muted-color: var(--p-surface-400);
+    --p-text-hover-muted-color: var(--p-surface-300);
+}
+
+/* Base body styles */
+body {
+    background-color: var(--p-surface-50);
+    color: var(--p-text-color);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dark body,
+:root.dark body {
+    background-color: var(--p-surface-900);
 }
