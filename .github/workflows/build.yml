@@ -133,52 +133,43 @@ jobs:
         with:
           fetch-depth: 0  # Fetch all history including tags
 
-      - name: Cache apt packages (amd64)
-        if: matrix.arch == 'amd64'
-        uses: awalsh128/cache-apt-pkgs-action@v1
-        with:
-          packages: libgtk-3-dev libwebkit2gtk-4.1-dev
-          version: 1.0
-
-      - name: Cache cross-compilation toolchain (arm64)
-        if: matrix.arch == 'arm64'
-        uses: awalsh128/cache-apt-pkgs-action@v1
-        with:
-          packages: gcc-aarch64-linux-gnu g++-aarch64-linux-gnu libc6-dev-arm64-cross
-          version: 1.0
-
-      - name: Setup arm64 architecture and sources
-        if: matrix.arch == 'arm64'
+      - name: Install Linux Dependencies
         run: |
-          sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
-          sudo tee /etc/apt/sources.list > /dev/null <<< ""
+          sudo apt-get update
+          if [ "${{ matrix.arch }}" = "arm64" ]; then
+            sudo apt-get install -y --no-install-recommends \
+            gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
+            libc6-dev-arm64-cross
 
-          sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ noble main restricted universe multiverse"
-          sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ noble-updates main restricted universe multiverse"
-          sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ noble-backports main restricted universe multiverse"
-          sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=amd64] http://security.ubuntu.com/ubuntu/ noble-security main restricted universe multiverse"
+            sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
+            sudo tee /etc/apt/sources.list > /dev/null <<< ""
 
-          sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ noble main restricted universe multiverse"
-          sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ noble-updates main restricted universe multiverse"
-          sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ noble-backports main restricted universe multiverse"
-          sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ noble-security main restricted universe multiverse"
+            sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ noble main restricted universe multiverse"
+            sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ noble-updates main restricted universe multiverse"
+            sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ noble-backports main restricted universe multiverse"
+            sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=amd64] http://security.ubuntu.com/ubuntu/ noble-security main restricted universe multiverse"
 
-          sudo tee /etc/apt/apt.conf.d/99arch-priority > /dev/null <<< ""
-          sudo tee -a /etc/apt/apt.conf.d/99arch-priority > /dev/null <<< "APT::Get::AllowUnauthenticated \"false\";"
-          sudo tee -a /etc/apt/apt.conf.d/99arch-priority > /dev/null <<< "Acquire::http::Pipeline-Depth \"0\";"
+            sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ noble main restricted universe multiverse"
+            sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ noble-updates main restricted universe multiverse"
+            sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ noble-backports main restricted universe multiverse"
+            sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ noble-security main restricted universe multiverse"
 
-          sudo dpkg --add-architecture arm64
+            sudo tee /etc/apt/apt.conf.d/99arch-priority > /dev/null <<< ""
+            sudo tee -a /etc/apt/apt.conf.d/99arch-priority > /dev/null <<< "APT::Get::AllowUnauthenticated \"false\";"
+            sudo tee -a /etc/apt/apt.conf.d/99arch-priority > /dev/null <<< "Acquire::http::Pipeline-Depth \"0\";"
 
-          sudo apt-get clean
-          sudo rm -rf /var/lib/apt/lists/*
-          sudo apt-get update -o Acquire::ForceIPv4=true -o APT::Ignore-Missing-Architecture=true || true
+            sudo dpkg --add-architecture arm64
 
-      - name: Cache arm64 libraries
-        if: matrix.arch == 'arm64'
-        uses: awalsh128/cache-apt-pkgs-action@v1
-        with:
-          packages: libgtk-3-dev:arm64 libwebkit2gtk-4.1-dev:arm64
-          version: 1.0
+            sudo apt-get clean
+            sudo rm -rf /var/lib/apt/lists/*
+            sudo apt-get update -o Acquire::ForceIPv4=true -o APT::Ignore-Missing-Architecture=true || true
+
+            sudo apt-get install -y --no-install-recommends \
+            libgtk-3-dev:arm64 libwebkit2gtk-4.1-dev:arm64
+          else
+            sudo apt-get install -y --no-install-recommends \
+            libgtk-3-dev libwebkit2gtk-4.1-dev
+          fi
 
       - name: Generate Version Info
         id: version
