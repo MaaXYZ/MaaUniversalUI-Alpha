@@ -15,26 +15,33 @@ on:
 
   workflow_dispatch:
 
+env:
+  MAA_VERSION: v5.2.4
+
 jobs:
   windows:
     runs-on: windows-latest
     strategy:
       matrix:
-        arch: [amd64, arm64]
+        arch: [ amd64, arm64 ]
       fail-fast: false
 
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # Fetch all history including tags
+
+      - name: Generate Version Info
+        id: version
+        uses: ./.github/actions/generate-version
 
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
           go-version: 'stable'
+          cache: true
 
-      - name: Install Dependencies
-        run: |
-          go mod tidy
 
       - name: Cache Wails CLI
         id: cache-wails
@@ -66,11 +73,27 @@ jobs:
           cd frontend
           pnpm install --frozen-lockfile
 
+      - name: Cache MaaFramework
+        id: cache-maa
+        uses: actions/cache@v4
+        with:
+          path: deps/MaaFramework
+          key: maa-framework-${{ runner.os }}-${{ matrix.arch }}-${{ env.MAA_VERSION }}
+
+      - name: Clean MaaFramework directory
+        if: steps.cache-maa.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          if (Test-Path "deps/MaaFramework") {
+            Remove-Item -Recurse -Force "deps/MaaFramework"
+          }
+
       - name: Download MaaFramework
+        if: steps.cache-maa.outputs.cache-hit != 'true'
         uses: robinraju/release-downloader@v1
         with:
           repository: MaaXYZ/MaaFramework
-          tag: v5.2.4
+          tag: ${{ env.MAA_VERSION }}
           fileName: "MAA-win-${{
             (matrix.arch == 'amd64' && 'x86_64') ||
             (matrix.arch == 'arm64' && 'aarch64')
@@ -80,7 +103,7 @@ jobs:
 
       - name: Build wails app
         run: |
-          wails build -platform windows/${{ matrix.arch }}
+          wails build -platform windows/${{ matrix.arch }} -ldflags "-X muu-alpha/backend/system.AppVersion=${{ steps.version.outputs.version }} -X muu-alpha/backend/system.BuildAt=${{ steps.version.outputs.timestamp }}"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v5
@@ -93,12 +116,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        arch: [amd64, arm64]
+        arch: [ amd64, arm64 ]
       fail-fast: false
 
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # Fetch all history including tags
 
       - name: Install Linux Dependencies
         run: |
@@ -110,23 +135,23 @@ jobs:
 
             sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
             sudo tee /etc/apt/sources.list > /dev/null <<< ""
-            
+
             sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ noble main restricted universe multiverse"
             sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ noble-updates main restricted universe multiverse"
             sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ noble-backports main restricted universe multiverse"
             sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=amd64] http://security.ubuntu.com/ubuntu/ noble-security main restricted universe multiverse"
-            
+
             sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ noble main restricted universe multiverse"
             sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ noble-updates main restricted universe multiverse"
             sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ noble-backports main restricted universe multiverse"
             sudo tee -a /etc/apt/sources.list > /dev/null <<< "deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ noble-security main restricted universe multiverse"
-            
+
             sudo tee /etc/apt/apt.conf.d/99arch-priority > /dev/null <<< ""
             sudo tee -a /etc/apt/apt.conf.d/99arch-priority > /dev/null <<< "APT::Get::AllowUnauthenticated \"false\";"
             sudo tee -a /etc/apt/apt.conf.d/99arch-priority > /dev/null <<< "Acquire::http::Pipeline-Depth \"0\";"
-            
-            sudo dpkg --add-architecture arm64  
-          
+
+            sudo dpkg --add-architecture arm64
+
             sudo apt-get clean
             sudo rm -rf /var/lib/apt/lists/*
             sudo apt-get update -o Acquire::ForceIPv4=true -o APT::Ignore-Missing-Architecture=true || true
@@ -138,14 +163,16 @@ jobs:
             libgtk-3-dev libwebkit2gtk-4.1-dev
           fi
 
+      - name: Generate Version Info
+        id: version
+        uses: ./.github/actions/generate-version
+
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
           go-version: 'stable'
+          cache: true
 
-      - name: Install Dependencies
-        run: |
-          go mod tidy
 
       - name: Cache Wails CLI
         id: cache-wails
@@ -177,11 +204,27 @@ jobs:
           cd frontend
           pnpm install --frozen-lockfile
 
+      - name: Cache MaaFramework
+        id: cache-maa
+        uses: actions/cache@v4
+        with:
+          path: deps/MaaFramework
+          key: maa-framework-${{ runner.os }}-${{ matrix.arch }}-${{ env.MAA_VERSION }}
+
+      - name: Clean MaaFramework directory
+        if: steps.cache-maa.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          if [ -d "deps/MaaFramework" ]; then
+            rm -rf deps/MaaFramework
+          fi
+
       - name: Download MaaFramework
+        if: steps.cache-maa.outputs.cache-hit != 'true'
         uses: robinraju/release-downloader@v1
         with:
           repository: MaaXYZ/MaaFramework
-          tag: v5.2.4
+          tag: ${{ env.MAA_VERSION }}
           fileName: "MAA-linux-${{
             (matrix.arch == 'amd64' && 'x86_64') ||
             (matrix.arch == 'arm64' && 'aarch64')
@@ -197,7 +240,7 @@ jobs:
             export CXX=aarch64-linux-gnu-g++
             export PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig
           fi
-          wails build -platform linux/${{ matrix.arch }} -tags webkit2_41
+          wails build -platform linux/${{ matrix.arch }} -tags webkit2_41 -ldflags "-X muu-alpha/backend/system.AppVersion=${{ steps.version.outputs.version }} -X muu-alpha/backend/system.BuildAt=${{ steps.version.outputs.timestamp }}"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v5
@@ -210,21 +253,24 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        arch: [arm64, amd64]
+        arch: [ arm64, amd64 ]
       fail-fast: false
 
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # Fetch all history including tags
+
+      - name: Generate Version Info
+        id: version
+        uses: ./.github/actions/generate-version
 
       - name: Setup Go
         uses: actions/setup-go@v6
         with:
           go-version: 'stable'
-
-      - name: Install Dependencies
-        run: |
-          go mod tidy
+          cache: true
 
       - name: Cache Wails CLI
         id: cache-wails
@@ -256,11 +302,27 @@ jobs:
           cd frontend
           pnpm install --frozen-lockfile
 
+      - name: Cache MaaFramework
+        id: cache-maa
+        uses: actions/cache@v4
+        with:
+          path: deps/MaaFramework
+          key: maa-framework-${{ runner.os }}-${{ matrix.arch }}-${{ env.MAA_VERSION }}
+
+      - name: Clean MaaFramework directory
+        if: steps.cache-maa.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          if [ -d "deps/MaaFramework" ]; then
+            rm -rf deps/MaaFramework
+          fi
+
       - name: Download MaaFramework
+        if: steps.cache-maa.outputs.cache-hit != 'true'
         uses: robinraju/release-downloader@v1
         with:
           repository: MaaXYZ/MaaFramework
-          tag: v5.2.4
+          tag: ${{ env.MAA_VERSION }}
           fileName: "MAA-macos-${{
             (matrix.arch == 'amd64' && 'x86_64') ||
             (matrix.arch == 'arm64' && 'aarch64')
@@ -270,8 +332,8 @@ jobs:
 
       - name: Build wails app
         run: |
-          wails build -platform darwin/${{ matrix.arch }}
-      
+          wails build -platform darwin/${{ matrix.arch }} -ldflags "-X muu-alpha/backend/system.AppVersion=${{ steps.version.outputs.version }} -X muu-alpha/backend/system.BuildAt=${{ steps.version.outputs.timestamp }}"
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v5
         with:
