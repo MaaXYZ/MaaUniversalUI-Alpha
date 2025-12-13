@@ -48,7 +48,7 @@ func Startup(ctx context.Context) {
 	}
 	exeDir := filepath.Dir(exePath)
 
-	ifacePath := filepath.Join(exeDir, "config", "interface.json")
+	ifacePath := filepath.Join(exeDir, "interface.json")
 	data, err := os.ReadFile(ifacePath)
 	if err != nil {
 		log.Printf("read interface file failed: %v", err)
