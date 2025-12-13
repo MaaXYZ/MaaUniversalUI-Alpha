@@ -1,5 +1,3 @@
-github.com/MaaXYZ/maa-framework-go/v3 v3.2.0 h1:ZI7wiao/8zBRHq4qMBS+Q5ZFPxRC5VLuatLNo06rKs8=
-github.com/MaaXYZ/maa-framework-go/v3 v3.2.0/go.mod h1:/mQzE6vukDG/eIjFjJepfq4jtxnQdYr+DuKIBYKNjQs=
 github.com/MaaXYZ/maa-framework-go/v3 v3.2.1 h1:QMDafsjXzwt4z8pFWA2Zf+Ctzbxqaa4Gs56jnLCocJg=
 github.com/MaaXYZ/maa-framework-go/v3 v3.2.1/go.mod h1:/mQzE6vukDG/eIjFjJepfq4jtxnQdYr+DuKIBYKNjQs=
 github.com/bep/debounce v1.2.1 h1:v67fRdBA9UQu2NhLFXrSg0Brw7CexQekrBwDMM8bzeY=
