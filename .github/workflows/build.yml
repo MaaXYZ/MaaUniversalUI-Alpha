@@ -39,7 +39,7 @@ jobs:
             $VERSION = $TAG -replace '^v', ''  # Remove v prefix
           } else {
             $HASH = git rev-parse --short=7 HEAD
-            $VERSION = "0.0.0-$HASH"
+            $VERSION = "DEBUG-$HASH"
           }
 
           # Generate UTC timestamp
