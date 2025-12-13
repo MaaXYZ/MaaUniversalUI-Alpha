@@ -1,0 +1,43 @@
+name: 'Generate Version Info'
+description: 'Generate version information and build timestamp for the application'
+outputs:
+  version:
+    description: 'Generated version string (tag or base-hash format)'
+    value: ${{ steps.version-info.outputs.version }}
+  timestamp:
+    description: 'Build timestamp in RFC3339 UTC format'
+    value: ${{ steps.version-info.outputs.timestamp }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Generate version information
+      id: version-info
+      shell: bash
+      run: |
+        # Detect Git tag
+        if TAG=$(git describe --tags --exact-match 2>/dev/null); then
+          VERSION="${TAG#v}"  # Remove v prefix
+        else
+          HASH=$(git rev-parse --short=7 HEAD)
+          # Find closest previous tag
+          if CLOSEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null); then
+            BASE="${CLOSEST_TAG#v}"  # Remove v prefix
+          else
+            BASE="0.0.0"
+          fi
+          VERSION="${BASE}-${HASH}"
+        fi
+
+        # Generate UTC timestamp
+        if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
+          # Windows (Git Bash)
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        else
+          # Linux/macOS
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        fi
+
+        echo "version=${VERSION}" >> $GITHUB_OUTPUT
+        echo "timestamp=${TIMESTAMP}" >> $GITHUB_OUTPUT
+        echo "Detected version: ${VERSION}"

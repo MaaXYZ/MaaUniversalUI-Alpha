@@ -34,23 +34,7 @@ jobs:
 
       - name: Generate Version Info
         id: version
-        shell: pwsh
-        run: |
-          # Detect Git tag
-          $TAG = git describe --tags --exact-match 2>$null
-          if ($LASTEXITCODE -eq 0) {
-            $VERSION = $TAG -replace '^v', ''  # Remove v prefix
-          } else {
-            $HASH = git rev-parse --short=7 HEAD
-            $VERSION = "DEBUG-$HASH"
-          }
-
-          # Generate UTC timestamp
-          $TIMESTAMP = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
-
-          echo "version=$VERSION" >> $env:GITHUB_OUTPUT
-          echo "timestamp=$TIMESTAMP" >> $env:GITHUB_OUTPUT
-          echo "Detected version: $VERSION"
+        uses: ./.github/actions/generate-version
 
       - name: Setup Go
         uses: actions/setup-go@v6
@@ -95,6 +79,14 @@ jobs:
         with:
           path: deps/MaaFramework
           key: maa-framework-${{ runner.os }}-${{ matrix.arch }}-${{ env.MAA_VERSION }}
+
+      - name: Clean MaaFramework directory
+        if: steps.cache-maa.outputs.cache-hit != 'true'
+        shell: pwsh
+        run: |
+          if (Test-Path "deps/MaaFramework") {
+            Remove-Item -Recurse -Force "deps/MaaFramework"
+          }
 
       - name: Download MaaFramework
         if: steps.cache-maa.outputs.cache-hit != 'true'
@@ -173,21 +165,7 @@ jobs:
 
       - name: Generate Version Info
         id: version
-        run: |
-          # Detect Git tag
-          if TAG=$(git describe --tags --exact-match 2>/dev/null); then
-            VERSION="${TAG#v}"  # Remove v prefix
-          else
-            HASH=$(git rev-parse --short=7 HEAD)
-            VERSION="DEBUG-${HASH}"
-          fi
-
-          # Generate UTC timestamp
-          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo "timestamp=${TIMESTAMP}" >> $GITHUB_OUTPUT
-          echo "Detected version: ${VERSION}"
+        uses: ./.github/actions/generate-version
 
       - name: Setup Go
         uses: actions/setup-go@v6
@@ -232,6 +210,14 @@ jobs:
         with:
           path: deps/MaaFramework
           key: maa-framework-${{ runner.os }}-${{ matrix.arch }}-${{ env.MAA_VERSION }}
+
+      - name: Clean MaaFramework directory
+        if: steps.cache-maa.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          if [ -d "deps/MaaFramework" ]; then
+            rm -rf deps/MaaFramework
+          fi
 
       - name: Download MaaFramework
         if: steps.cache-maa.outputs.cache-hit != 'true'
@@ -278,21 +264,7 @@ jobs:
 
       - name: Generate Version Info
         id: version
-        run: |
-          # Detect Git tag
-          if TAG=$(git describe --tags --exact-match 2>/dev/null); then
-            VERSION="${TAG#v}"  # Remove v prefix
-          else
-            HASH=$(git rev-parse --short=7 HEAD)
-            VERSION="DEBUG-${HASH}"
-          fi
-
-          # Generate UTC timestamp
-          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo "timestamp=${TIMESTAMP}" >> $GITHUB_OUTPUT
-          echo "Detected version: ${VERSION}"
+        uses: ./.github/actions/generate-version
 
       - name: Setup Go
         uses: actions/setup-go@v6
@@ -336,6 +308,14 @@ jobs:
         with:
           path: deps/MaaFramework
           key: maa-framework-${{ runner.os }}-${{ matrix.arch }}-${{ env.MAA_VERSION }}
+
+      - name: Clean MaaFramework directory
+        if: steps.cache-maa.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          if [ -d "deps/MaaFramework" ]; then
+            rm -rf deps/MaaFramework
+          fi
 
       - name: Download MaaFramework
         if: steps.cache-maa.outputs.cache-hit != 'true'
