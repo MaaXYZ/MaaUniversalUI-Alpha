@@ -26,6 +26,28 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # Fetch all history including tags
+
+      - name: Generate Version Info
+        id: version
+        shell: pwsh
+        run: |
+          # Detect Git tag
+          $TAG = git describe --tags --exact-match 2>$null
+          if ($LASTEXITCODE -eq 0) {
+            $VERSION = $TAG -replace '^v', ''  # Remove v prefix
+          } else {
+            $HASH = git rev-parse --short=7 HEAD
+            $VERSION = "0.0.0-$HASH"
+          }
+
+          # Generate UTC timestamp
+          $TIMESTAMP = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+
+          echo "version=$VERSION" >> $env:GITHUB_OUTPUT
+          echo "timestamp=$TIMESTAMP" >> $env:GITHUB_OUTPUT
+          echo "Detected version: $VERSION"
 
       - name: Setup Go
         uses: actions/setup-go@v6
@@ -80,7 +102,7 @@ jobs:
 
       - name: Build wails app
         run: |
-          wails build -platform windows/${{ matrix.arch }}
+          wails build -platform windows/${{ matrix.arch }} -ldflags "-X muu-alpha/backend/system.AppVersion=${{ steps.version.outputs.version }} -X muu-alpha/backend/system.BuildAt=${{ steps.version.outputs.timestamp }}"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v5
@@ -99,6 +121,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # Fetch all history including tags
 
       - name: Install Linux Dependencies
         run: |
@@ -137,6 +161,24 @@ jobs:
             sudo apt-get install -y --no-install-recommends \
             libgtk-3-dev libwebkit2gtk-4.1-dev
           fi
+
+      - name: Generate Version Info
+        id: version
+        run: |
+          # Detect Git tag
+          if TAG=$(git describe --tags --exact-match 2>/dev/null); then
+            VERSION="${TAG#v}"  # Remove v prefix
+          else
+            HASH=$(git rev-parse --short=7 HEAD)
+            VERSION="0.0.0-${HASH}"
+          fi
+
+          # Generate UTC timestamp
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "timestamp=${TIMESTAMP}" >> $GITHUB_OUTPUT
+          echo "Detected version: ${VERSION}"
 
       - name: Setup Go
         uses: actions/setup-go@v6
@@ -197,7 +239,7 @@ jobs:
             export CXX=aarch64-linux-gnu-g++
             export PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig
           fi
-          wails build -platform linux/${{ matrix.arch }} -tags webkit2_41
+          wails build -platform linux/${{ matrix.arch }} -tags webkit2_41 -ldflags "-X muu-alpha/backend/system.AppVersion=${{ steps.version.outputs.version }} -X muu-alpha/backend/system.BuildAt=${{ steps.version.outputs.timestamp }}"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v5
@@ -216,6 +258,26 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # Fetch all history including tags
+
+      - name: Generate Version Info
+        id: version
+        run: |
+          # Detect Git tag
+          if TAG=$(git describe --tags --exact-match 2>/dev/null); then
+            VERSION="${TAG#v}"  # Remove v prefix
+          else
+            HASH=$(git rev-parse --short=7 HEAD)
+            VERSION="0.0.0-${HASH}"
+          fi
+
+          # Generate UTC timestamp
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "timestamp=${TIMESTAMP}" >> $GITHUB_OUTPUT
+          echo "Detected version: ${VERSION}"
 
       - name: Setup Go
         uses: actions/setup-go@v6
@@ -270,8 +332,8 @@ jobs:
 
       - name: Build wails app
         run: |
-          wails build -platform darwin/${{ matrix.arch }}
-      
+          wails build -platform darwin/${{ matrix.arch }} -ldflags "-X muu-alpha/backend/system.AppVersion=${{ steps.version.outputs.version }} -X muu-alpha/backend/system.BuildAt=${{ steps.version.outputs.timestamp }}"
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v5
         with:
