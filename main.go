@@ -6,6 +6,7 @@ import (
 	"muu-alpha/backend/appconf"
 	"muu-alpha/backend/engine"
 	"muu-alpha/backend/pi"
+	"muu-alpha/backend/system"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -19,6 +20,7 @@ func main() {
 	piSrv := pi.PI()
 	appConfSrv := appconf.AppConf()
 	engSrv := engine.Engine()
+	sysSrv := system.System()
 
 	err := wails.Run(&options.App{
 		Title:  "muu-alpha",
@@ -33,11 +35,13 @@ func main() {
 			pi.Startup(ctx)
 			appconf.Startup(ctx)
 			engine.Startup(ctx)
+			system.Startup(ctx)
 		},
 		Bind: []interface{}{
 			piSrv,
 			appConfSrv,
 			engSrv,
+			sysSrv,
 		},
 	})
 
