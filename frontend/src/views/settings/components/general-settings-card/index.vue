@@ -17,7 +17,7 @@
 </script>
 
 <template>
-  <div class="max-w-md">
+  <div class="w-full">
     <div
       class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg"
     >
