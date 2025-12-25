@@ -6,6 +6,7 @@ import './tailwind.css'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import i18n from './locales'
 
 const app = createApp(App)
 
@@ -15,5 +16,6 @@ app.use(PrimeVue, {
 app.use(ToastService)
 app.use(router)
 app.use(store)
+app.use(i18n as any)
 
 app.mount('#app')

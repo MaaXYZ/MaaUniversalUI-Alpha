@@ -3,6 +3,7 @@
   import { Icon } from '@iconify/vue'
   import { pi } from '@wails/go/models'
   import { usePiStore } from '@/store/modules'
+  import { useI18n } from 'vue-i18n'
 
   const props = defineProps<{
     availableTasks: pi.V2Task[]
@@ -13,6 +14,7 @@
     addTask: [task: pi.V2Task]
   }>()
 
+  const { t } = useI18n()
   const piStore = usePiStore()
 
   /** Whether the task picker is visible */
@@ -95,7 +97,7 @@
       >
         <div class="p-2 border-b border-gray-200 dark:border-gray-700">
           <span class="text-xs text-gray-500 dark:text-gray-400 select-none"
-            >选择要添加的任务</span
+            >{{ t('home.task-list.task-picker.tip') }}</span
           >
         </div>
         <div class="p-1">

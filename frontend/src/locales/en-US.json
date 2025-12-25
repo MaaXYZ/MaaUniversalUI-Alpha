@@ -1,0 +1,20 @@
+{
+  "common": {
+    "confirm": "Confirm"
+  },
+  "home": {
+    "task-list": {
+      "title": "Task List",
+      "empty-state": {
+        "title": "No tasks",
+        "add-task": "Add task"
+      },
+      "loading-state": {
+        "title": "Loading..."
+      },
+      "task-picker": {
+        "tip": "Select the task to add"
+      }
+    }
+  }
+}
