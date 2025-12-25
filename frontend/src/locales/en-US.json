@@ -20,14 +20,14 @@
       "system": "System"
     },
     "resource": {
-      "title": "Resources",
+      "title": "Resource Configuration",
       "desc": "Select the resource version to use",
       "select_resource": "Select Resource",
       "no_resources": "No resources available",
       "select_version": "Select Resource Version"
     },
     "controller": {
-      "title": "Controller",
+      "title": "Controller Configuration",
       "desc": "Select connection method (ADB/Win32)",
       "select_controller": "Select Controller",
       "no_controllers": "No controllers available",
