@@ -17,11 +17,19 @@
       label: t('settings.general.title'),
       icon: 'fluent:settings-20-regular',
     },
-    { id: 'theme', label: '外观设置', icon: 'fluent:color-20-regular' },
-    { id: 'resource', label: '资源配置', icon: 'fluent:folder-open-20-regular' },
+    {
+      id: 'theme',
+      label: t('settings.theme.title'),
+      icon: 'fluent:color-20-regular',
+    },
+    {
+      id: 'resource',
+      label: t('settings.resource.title'),
+      icon: 'fluent:folder-open-20-regular',
+    },
     {
       id: 'controller',
-      label: '控制器配置',
+      label: t('settings.controller.title'),
       icon: 'fluent:phone-link-setup-20-regular',
     },
   ])
@@ -96,7 +104,7 @@
     <aside class="w-56 shrink-0 hidden md:block">
       <div class="sticky top-6">
         <h2 class="text-lg font-bold text-gray-900 dark:text-white px-4 mb-4">
-          设置
+          {{ t('settings.title') }}
         </h2>
         <SettingsSidebar
           :items="navItems"

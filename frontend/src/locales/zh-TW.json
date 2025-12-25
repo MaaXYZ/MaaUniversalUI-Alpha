@@ -1,14 +1,50 @@
 {
   "common": {
-    "confirm": "確定"
+    "confirm": "確定",
+    "loading": "載入中..."
   },
   "settings": {
+    "title": "設定",
     "general": {
       "title": "一般設定",
       "language": {
         "title": "語言",
         "desc": "選擇應用程式的顯示語言"
       }
+    },
+    "theme": {
+      "title": "外觀設定",
+      "desc": "選擇應用程式的主題模式",
+      "light": "淺色",
+      "dark": "深色",
+      "system": "跟隨系統"
+    },
+    "resource": {
+      "title": "資源配置",
+      "desc": "選擇目前使用的資源版本",
+      "select_resource": "請選擇資源",
+      "no_resources": "暫無可用資源",
+      "select_version": "選擇資源版本"
+    },
+    "controller": {
+      "title": "控制器配置",
+      "desc": "選擇連接方式（ADB/Win32）",
+      "select_controller": "請選擇控制器",
+      "no_controllers": "暫無可用控制器",
+      "select_type": "選擇控制器類型",
+      "adb": {
+        "path": "ADB 路徑",
+        "path_desc": "留空則使用系統預設 ADB",
+        "path_placeholder": "例如：C:\\platform-tools\\adb.exe",
+        "address": "連接位址",
+        "address_desc": "模擬器或裝置的 ADB 連接位址",
+        "address_placeholder": "例如：127.0.0.1:5555"
+      },
+      "advanced": "進階設定",
+      "extra_config": "額外設定 (JSON)",
+      "extra_config_desc": "ADB 控制器的額外設定參數",
+      "extra_config_placeholder": "例如：{ \"extras\": {} }",
+      "invalid_json": "JSON 格式無效"
     }
   },
   "home": {

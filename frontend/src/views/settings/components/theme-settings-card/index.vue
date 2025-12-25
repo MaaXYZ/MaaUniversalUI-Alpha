@@ -1,16 +1,18 @@
 <script setup lang="ts">
   import { computed } from 'vue'
   import { Icon } from '@iconify/vue'
+  import { useI18n } from 'vue-i18n'
   import { useConfigStore, type ThemeMode } from '@/store/modules/config'
 
+  const { t } = useI18n()
   const configStore = useConfigStore()
 
   /** Theme options */
-  const themeOptions: { value: ThemeMode; label: string; icon: string }[] = [
-    { value: 'light', label: '浅色', icon: 'fluent:weather-sunny-20-regular' },
-    { value: 'dark', label: '深色', icon: 'fluent:weather-moon-20-regular' },
-    { value: 'system', label: '跟随系统', icon: 'fluent:desktop-20-regular' },
-  ]
+  const themeOptions = computed(() => [
+    { value: 'light' as ThemeMode, label: t('settings.theme.light'), icon: 'fluent:weather-sunny-20-regular' },
+    { value: 'dark' as ThemeMode, label: t('settings.theme.dark'), icon: 'fluent:weather-moon-20-regular' },
+    { value: 'system' as ThemeMode, label: t('settings.theme.system'), icon: 'fluent:desktop-20-regular' },
+  ])
 
   /** Current theme mode */
   const currentMode = computed(() => configStore.theme)
@@ -48,10 +50,10 @@
         </div>
         <div class="flex-1">
           <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-100">
-            外观设置
+            {{ t('settings.theme.title') }}
           </h3>
           <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-            选择应用的主题模式
+            {{ t('settings.theme.desc') }}
           </p>
         </div>
       </div>

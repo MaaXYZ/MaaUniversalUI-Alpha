@@ -1,9 +1,11 @@
 <script setup lang="ts">
   import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
   import { Icon } from '@iconify/vue'
+  import { useI18n } from 'vue-i18n'
   import { usePiStore, useConfigStore } from '@/store/modules'
   import { pi } from '@wails/go/models'
 
+  const { t } = useI18n()
   const piStore = usePiStore()
   const configStore = useConfigStore()
 
@@ -28,7 +30,8 @@
 
   /** Current controller display name */
   const currentControllerDisplayName = computed(() => {
-    if (!currentControllerObj.value) return '请选择控制器'
+    if (!currentControllerObj.value)
+      return t('settings.controller.select_controller')
     return getControllerDisplayName(currentControllerObj.value)
   })
 
@@ -220,10 +223,10 @@
         </div>
         <div class="flex-1">
           <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-100">
-            控制器配置
+            {{ t('settings.controller.title') }}
           </h3>
           <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-            选择连接方式（ADB/Win32）
+            {{ t('settings.controller.desc') }}
           </p>
         </div>
 
@@ -250,7 +253,7 @@
             height="24"
             class="animate-spin mr-2"
           />
-          <span class="text-sm">加载中...</span>
+          <span class="text-sm">{{ t('common.loading') }}</span>
         </div>
 
         <!-- No Controllers State -->
@@ -264,7 +267,7 @@
             height="40"
             class="mb-2 opacity-60"
           />
-          <p class="text-sm">暂无可用控制器</p>
+          <p class="text-sm">{{ t('settings.controller.no_controllers') }}</p>
         </div>
 
         <!-- Controller Picker -->
@@ -340,7 +343,7 @@
                 <span
                   class="text-xs text-gray-500 dark:text-gray-400 select-none"
                 >
-                  选择控制器类型
+                  {{ t('settings.controller.select_type') }}
                 </span>
               </div>
               <div class="p-1">
@@ -427,15 +430,15 @@
               <label
                 class="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                ADB 路径
+                {{ t('settings.controller.adb.path') }}
               </label>
               <p class="text-xs text-gray-500 dark:text-gray-400">
-                留空则使用系统默认 ADB
+                {{ t('settings.controller.adb.path_desc') }}
               </p>
               <input
                 v-model="adbPath"
                 type="text"
-                placeholder="例如：C:\platform-tools\adb.exe"
+                :placeholder="t('settings.controller.adb.path_placeholder')"
                 class="w-full px-3 py-2.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
                 @input="debouncedSave"
               />
@@ -446,15 +449,15 @@
               <label
                 class="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                连接地址
+                {{ t('settings.controller.adb.address') }}
               </label>
               <p class="text-xs text-gray-500 dark:text-gray-400">
-                模拟器或设备的 ADB 连接地址
+                {{ t('settings.controller.adb.address_desc') }}
               </p>
               <input
                 v-model="adbAddress"
                 type="text"
-                placeholder="例如：127.0.0.1:5555"
+                :placeholder="t('settings.controller.adb.address_placeholder')"
                 class="w-full px-3 py-2.5 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200"
                 @input="debouncedSave"
               />
@@ -473,7 +476,7 @@
                   class="transition-transform duration-200"
                   :class="{ 'rotate-90': showAdvanced }"
                 />
-                <span>高级设置</span>
+                <span>{{ t('settings.controller.advanced') }}</span>
               </button>
 
               <!-- Advanced Config -->
@@ -492,15 +495,15 @@
                   <label
                     class="block text-sm font-medium text-gray-700 dark:text-gray-300"
                   >
-                    额外配置 (JSON)
+                    {{ t('settings.controller.extra_config') }}
                   </label>
                   <p class="text-xs text-gray-500 dark:text-gray-400">
-                    ADB 控制器的额外配置参数
+                    {{ t('settings.controller.extra_config_desc') }}
                   </p>
                   <textarea
                     v-model="adbConfigJson"
                     rows="4"
-                    placeholder='例如：{ "extras": {} }'
+                    :placeholder="t('settings.controller.extra_config_placeholder')"
                     class="w-full px-3 py-2.5 text-sm font-mono bg-white dark:bg-gray-700 border rounded-lg text-gray-700 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 resize-none"
                     :class="
                       isConfigJsonValid
@@ -513,7 +516,7 @@
                     v-if="!isConfigJsonValid"
                     class="text-xs text-red-500"
                   >
-                    JSON 格式无效
+                    {{ t('settings.controller.invalid_json') }}
                   </p>
                 </div>
               </Transition>

@@ -1,9 +1,11 @@
 <script setup lang="ts">
   import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
   import { Icon } from '@iconify/vue'
+  import { useI18n } from 'vue-i18n'
   import { usePiStore, useConfigStore } from '@/store/modules'
   import { pi } from '@wails/go/models'
 
+  const { t } = useI18n()
   const piStore = usePiStore()
   const configStore = useConfigStore()
 
@@ -25,7 +27,7 @@
 
   /** Current resource display name */
   const currentResourceDisplayName = computed(() => {
-    if (!currentResourceObj.value) return '请选择资源'
+    if (!currentResourceObj.value) return t('settings.resource.select_resource')
     return getResourceDisplayName(currentResourceObj.value)
   })
 
@@ -113,10 +115,10 @@
         </div>
         <div class="flex-1">
           <h3 class="text-sm font-semibold text-gray-800 dark:text-gray-100">
-            资源配置
+            {{ t('settings.resource.title') }}
           </h3>
           <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-            选择当前使用的资源版本
+            {{ t('settings.resource.desc') }}
           </p>
         </div>
 
@@ -143,7 +145,7 @@
             height="24"
             class="animate-spin mr-2"
           />
-          <span class="text-sm">加载中...</span>
+          <span class="text-sm">{{ t('common.loading') }}</span>
         </div>
 
         <!-- No Resources State -->
@@ -157,7 +159,7 @@
             height="40"
             class="mb-2 opacity-60"
           />
-          <p class="text-sm">暂无可用资源</p>
+          <p class="text-sm">{{ t('settings.resource.no_resources') }}</p>
         </div>
 
         <!-- Resource Picker -->
@@ -224,7 +226,7 @@
                 <span
                   class="text-xs text-gray-500 dark:text-gray-400 select-none"
                 >
-                  选择资源版本
+                  {{ t('settings.resource.select_version') }}
                 </span>
               </div>
               <div class="p-1">
