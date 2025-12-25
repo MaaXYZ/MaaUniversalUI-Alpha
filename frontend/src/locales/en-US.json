@@ -2,6 +2,15 @@
   "common": {
     "confirm": "Confirm"
   },
+  "settings": {
+    "general": {
+      "title": "General Settings",
+      "language": {
+        "title": "Language",
+        "desc": "Select the display language of the application"
+      }
+    }
+  },
   "home": {
     "task-list": {
       "title": "Task List",

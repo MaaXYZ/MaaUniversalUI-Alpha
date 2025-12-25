@@ -7,6 +7,7 @@ import {
   GetSupported,
 } from '@wails/go/appconf/service'
 import { pi, appconf } from '@wails/go/models'
+import i18n from '@/locales'
 
 export type ThemeMode = 'light' | 'dark' | 'system'
 
@@ -118,8 +119,11 @@ export const useConfigStore = defineStore('config', () => {
       appConfig.value = appConfigData
       appSupported.value = supportedData
 
-      // Apply theme immediately
+      // Apply theme and language immediately
       applyTheme()
+      if (appConfig.value.language) {
+        ;(i18n.global.locale as any).value = appConfig.value.language
+      }
     } catch (e) {
       error.value = e instanceof Error ? e.message : String(e)
       console.error('Failed to load config:', e)
@@ -214,6 +218,7 @@ export const useConfigStore = defineStore('config', () => {
     if (!appConfig.value) return
 
     appConfig.value.language = newLanguage
+    ;(i18n.global.locale as any).value = newLanguage
     await save()
   }
 

@@ -2,6 +2,15 @@
   "common": {
     "confirm": "确定"
   },
+  "settings": {
+    "general": {
+      "title": "通用设置",
+      "language": {
+        "title": "语言",
+        "desc": "选择应用的显示语言"
+      }
+    }
+  },
   "home": {
     "task-list": {
       "title": "任务列表",

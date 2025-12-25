@@ -1,3 +1,4 @@
 export { default as ResSettingsCard } from './res-settings-card/index.vue'
 export { default as CtrlSettingsCard } from './ctrl-settings-card/index.vue'
 export { default as ThemeSettingsCard } from './theme-settings-card/index.vue'
+export { default as GeneralSettingsCard } from './general-settings-card/index.vue'
