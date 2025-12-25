@@ -9,9 +9,21 @@
 
   /** Theme options */
   const themeOptions = computed(() => [
-    { value: 'light' as ThemeMode, label: t('settings.theme.light'), icon: 'fluent:weather-sunny-20-regular' },
-    { value: 'dark' as ThemeMode, label: t('settings.theme.dark'), icon: 'fluent:weather-moon-20-regular' },
-    { value: 'system' as ThemeMode, label: t('settings.theme.system'), icon: 'fluent:desktop-20-regular' },
+    {
+      value: 'light' as ThemeMode,
+      label: t('settings.theme.light'),
+      icon: 'fluent:weather-sunny-20-regular',
+    },
+    {
+      value: 'dark' as ThemeMode,
+      label: t('settings.theme.dark'),
+      icon: 'fluent:weather-moon-20-regular',
+    },
+    {
+      value: 'system' as ThemeMode,
+      label: t('settings.theme.system'),
+      icon: 'fluent:desktop-20-regular',
+    },
   ])
 
   /** Current theme mode */
@@ -65,7 +77,7 @@
           <button
             v-for="option in themeOptions"
             :key="option.value"
-            class="flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all duration-200 cursor-pointer"
+            class="flex items-center gap-2 p-2 rounded-lg border-2 transition-all duration-200 cursor-pointer"
             :class="
               isSelected(option.value)
                 ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20'
@@ -97,23 +109,6 @@
             >
               {{ option.label }}
             </span>
-            <!-- Selected indicator -->
-            <div
-              class="w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors"
-              :class="
-                isSelected(option.value)
-                  ? 'border-amber-500 bg-amber-500'
-                  : 'border-gray-300 dark:border-gray-600'
-              "
-            >
-              <Icon
-                v-if="isSelected(option.value)"
-                icon="fluent:checkmark-12-regular"
-                width="10"
-                height="10"
-                class="text-white"
-              />
-            </div>
           </button>
         </div>
       </div>
