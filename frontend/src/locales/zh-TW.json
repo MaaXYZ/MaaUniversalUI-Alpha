@@ -1,0 +1,29 @@
+{
+  "common": {
+    "confirm": "確定"
+  },
+  "settings": {
+    "general": {
+      "title": "一般設定",
+      "language": {
+        "title": "語言",
+        "desc": "選擇應用程式的顯示語言"
+      }
+    }
+  },
+  "home": {
+    "task-list": {
+      "title": "任務列表",
+      "empty-state": {
+        "title": "暫無任務",
+        "add-task": "新增任務"
+      },
+      "loading-state": {
+        "title": "載入中..."
+      },
+      "task-picker": {
+        "tip": "選擇要新增的任務"
+      }
+    }
+  }
+}
