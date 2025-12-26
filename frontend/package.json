@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vue-tsc -b --noEmit && vite build",
+    "dev": "bunx --bun vite",
+    "build": "vue-tsc -b --noEmit && bunx --bun vite build",
     "preview": "vite preview"
   },
   "dependencies": {
