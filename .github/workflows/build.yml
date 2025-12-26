@@ -184,7 +184,7 @@ jobs:
       - name: Install frontend dependencies
         run: |
           cd frontend
-          pnpm install --frozen-lockfile
+          bun install --frozen-lockfile
 
       - name: Cache MaaFramework
         id: cache-maa
@@ -274,7 +274,7 @@ jobs:
       - name: Install frontend dependencies
         run: |
           cd frontend
-          pnpm install --frozen-lockfile
+          bun install --frozen-lockfile
 
       - name: Cache MaaFramework
         id: cache-maa
