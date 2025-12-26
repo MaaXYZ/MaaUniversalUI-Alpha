@@ -61,5 +61,23 @@
         "tip": "Select the task to add"
       }
     }
+  },
+  "layout": {
+    "sider": {
+      "home": "Home",
+      "logs": "Logs",
+      "about": "About",
+      "settings": "Settings"
+    },
+    "header": {
+      "controls": {
+        "pin": "Pin to top",
+        "unpin": "Unpin",
+        "minimize": "Minimize",
+        "maximize": "Maximize",
+        "restore": "Restore",
+        "close": "Close"
+      }
+    }
   }
 }

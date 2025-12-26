@@ -1,6 +1,8 @@
 <script setup lang="ts">
   import { useRouter } from 'vue-router'
   import { Icon } from '@iconify/vue'
+  import { useI18n } from 'vue-i18n'
+  import { computed } from 'vue'
   import {
     ABOUT_ROUTE,
     HOME_ROUTE,
@@ -8,6 +10,7 @@
     SETTINGS_ROUTE,
   } from '@/router/routes.ts'
 
+  const { t } = useI18n()
   const router = useRouter()
 
   const navigateTo = (path: string) => {
@@ -30,28 +33,28 @@
     return router.currentRoute.value.path === path
   }
 
-  const items = [
+  const items = computed(() => [
     {
-      name: 'Home',
+      name: t('layout.sider.home'),
       icon: 'fluent:home-24-regular',
       route: HOME_ROUTE,
     },
     {
-      name: 'Logs',
+      name: t('layout.sider.logs'),
       icon: 'fluent:clock-24-regular',
       route: LOGS_ROUTE,
     },
     {
-      name: 'About',  
+      name: t('layout.sider.about'),
       icon: 'fluent:info-24-regular',
       route: ABOUT_ROUTE,
     },
     {
-      name: 'Settings',
+      name: t('layout.sider.settings'),
       icon: 'fluent:settings-24-regular',
       route: SETTINGS_ROUTE,
     },
-  ]
+  ])
 </script>
 
 <template>

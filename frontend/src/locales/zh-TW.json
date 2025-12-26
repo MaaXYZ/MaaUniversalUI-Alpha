@@ -61,5 +61,23 @@
         "tip": "選擇要新增的任務"
       }
     }
+  },
+  "layout": {
+    "sider": {
+      "home": "首頁",
+      "logs": "日誌",
+      "about": "關於",
+      "settings": "設定"
+    },
+    "header": {
+      "controls": {
+        "pin": "置頂",
+        "unpin": "取消置頂",
+        "minimize": "最小化",
+        "maximize": "最大化",
+        "restore": "恢復",
+        "close": "關閉"
+      }
+    }
   }
 }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { Icon } from '@iconify/vue'
   import { onMounted, ref } from 'vue'
+  import { useI18n } from 'vue-i18n'
   import {
     WindowSetAlwaysOnTop,
     WindowMaximise,
@@ -9,6 +10,8 @@
     WindowMinimise,
     Quit,
   } from '@wails/runtime'
+
+  const { t } = useI18n()
 
   const isPinned = ref(false)
   const isMaximized = ref(false)
@@ -49,7 +52,11 @@
     <div
       class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors duration-200"
       @click="togglePin"
-      :title="isPinned ? '取消置顶' : '置顶'"
+      :title="
+        isPinned
+          ? t('layout.header.controls.unpin')
+          : t('layout.header.controls.pin')
+      "
     >
       <Icon
         v-if="isPinned"
@@ -65,7 +72,7 @@
     <div
       class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors duration-200"
       @click="minimize"
-      title="最小化"
+      :title="t('layout.header.controls.minimize')"
     >
       <Icon icon="fluent:subtract-20-regular" width="20" height="20" />
     </div>
@@ -73,7 +80,11 @@
     <div
       class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors duration-200"
       @click="toggleMaximize"
-      :title="isMaximized ? '恢复' : '最大化'"
+      :title="
+        isMaximized
+          ? t('layout.header.controls.restore')
+          : t('layout.header.controls.maximize')
+      "
     >
       <Icon
         v-if="isMaximized"
@@ -87,7 +98,7 @@
     <div
       class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors duration-200"
       @click="close"
-      title="关闭"
+      :title="t('layout.header.controls.close')"
     >
       <Icon icon="fluent:dismiss-20-regular" width="20" height="20" />
     </div>

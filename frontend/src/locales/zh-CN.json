@@ -61,5 +61,23 @@
         "tip": "选择要添加的任务"
       }
     }
+  },
+  "layout": {
+    "sider": {
+      "home": "主页",
+      "logs": "日志",
+      "about": "关于",
+      "settings": "设置"
+    },
+    "header": {
+      "controls": {
+        "pin": "置顶",
+        "unpin": "取消置顶",
+        "minimize": "最小化",
+        "maximize": "最大化",
+        "restore": "恢复",
+        "close": "关闭"
+      }
+    }
   }
 }
