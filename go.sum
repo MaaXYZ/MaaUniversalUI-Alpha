@@ -1,5 +1,5 @@
-github.com/MaaXYZ/maa-framework-go/v3 v3.2.1 h1:QMDafsjXzwt4z8pFWA2Zf+Ctzbxqaa4Gs56jnLCocJg=
-github.com/MaaXYZ/maa-framework-go/v3 v3.2.1/go.mod h1:/mQzE6vukDG/eIjFjJepfq4jtxnQdYr+DuKIBYKNjQs=
+github.com/MaaXYZ/maa-framework-go/v3 v3.4.0 h1:/+Vdk18rCU6ZUlUHND8EeVjiXusXvNX1ybf1qKQ+qoM=
+github.com/MaaXYZ/maa-framework-go/v3 v3.4.0/go.mod h1:/mQzE6vukDG/eIjFjJepfq4jtxnQdYr+DuKIBYKNjQs=
 github.com/bep/debounce v1.2.1 h1:v67fRdBA9UQu2NhLFXrSg0Brw7CexQekrBwDMM8bzeY=
 github.com/bep/debounce v1.2.1/go.mod h1:H8yggRPQKLUhUoqrJC1bO2xNya7vanpDl7xR3ISbCJ0=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
