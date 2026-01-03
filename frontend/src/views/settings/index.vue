@@ -115,7 +115,7 @@
     </aside>
 
     <!-- Content -->
-    <main class="flex-1 min-w-0 max-w-3xl space-y-10 pb-24">
+    <main class="flex-1 min-w-0 max-w-3xl space-y-10">
       <section
         id="general"
         class="scroll-mt-6"
