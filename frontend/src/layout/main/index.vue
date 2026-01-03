@@ -10,7 +10,7 @@
       <div class="fixed top-1/2 -translate-y-1/2 left-7.5 z-10">
         <app-sider />
       </div>
-      <div class="px-7.5 pb-15">
+      <div class="px-7.5 pb-15 h-full">
         <router-view />
       </div>
     </div>

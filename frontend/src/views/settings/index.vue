@@ -99,7 +99,7 @@
 </script>
 
 <template>
-  <div class="flex gap-8 pl-24 pt-2 relative">
+  <div class="flex gap-8 pl-24 pt-2 relative h-full">
     <!-- Sidebar -->
     <aside class="w-56 shrink-0 hidden md:block">
       <div class="sticky top-6">
@@ -110,12 +110,12 @@
           :items="navItems"
           :active-id="activeId"
           @select="handleSelect"
-        />
+        />  
       </div>
     </aside>
 
     <!-- Content -->
-    <main class="flex-1 min-w-0 max-w-3xl space-y-10">
+    <main class="flex-1 min-w-0 max-w-3xl space-y-10 h-full overflow-y-auto scrollbar-none">
       <section
         id="general"
         class="scroll-mt-6"

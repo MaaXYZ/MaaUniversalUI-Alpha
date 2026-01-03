@@ -3,10 +3,10 @@
 </script>
 
 <template>
-  <div class="pl-24 flex gap-4">
+  <div class="pl-24 flex gap-4 h-full">
     <task-list />
     <options-panel />
-    <div class="">
+    <div class="flex flex-col justify-end">
       <task-control-button />
     </div>
   </div>
